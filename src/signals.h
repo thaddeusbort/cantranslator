@@ -31,6 +31,14 @@ int getSignalCount();
  */
 CanBus* getCanBuses();
 
+/* Public: The number of Input pins to read.
+ */
+int getInputCount();
+
+/* Public: Return an array of all input pins used for hard-wired signals.
+ */
+int* getInputPins();
+
 /* Public: Return the name of the vehicle or architecture this translator is
  * currently programmed for.
  */
@@ -41,7 +49,7 @@ const char* getMessageSet();
  * as an OpenXC-style JSON message.
  *
  * This is the main workhorse function of the CAN translator. Every time a new
- * CAN message is received that matches one of the signals in the list returend
+ * CAN message is received that matches one of the signals in the list returned
  * by getSignals(), this function is called with the message ID and 64-bit data
  * field.
  *
@@ -49,6 +57,13 @@ const char* getMessageSet();
  * data - The 64-bit data field of the CAN message.
  */
 void decodeCanMessage(int id, uint64_t data);
+
+/* Public: Read Input signal from pin and send the resulting value over USB
+ * as an OpenXC-style JSON message.
+ *
+ * pin - The pin number to read for the input signal.
+ */
+void readInputSignal(int pin);
 
 /* Public: Initialize an array of the CAN message filters that should be set for
  * the CAN module with the given address.

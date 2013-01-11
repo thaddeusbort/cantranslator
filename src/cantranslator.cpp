@@ -17,15 +17,20 @@ extern Listener listener;
 
 void receiveCan(CanBus*);
 void initializeAllCan();
+void initializeAllInputs();
 bool receiveWriteRequest(uint8_t*);
 
 void setup() {
     initializeAllCan();
+    initializeAllInputs();
 }
 
 void loop() {
     for(int i = 0; i < getCanBusCount(); i++) {
         receiveCan(&getCanBuses()[i]);
+    }
+    for(int i = 0; i < getInputCount(); i++) {
+        readInputSignal(getInputPins()[i]);
     }
 
     readFromHost(listener.usb, &receiveWriteRequest);
@@ -40,6 +45,12 @@ void loop() {
 void initializeAllCan() {
     for(int i = 0; i < getCanBusCount(); i++) {
         initializeCan(&(getCanBuses()[i]));
+    }
+}
+
+void initializeAllInputs() {
+    for(int i = 0; i < getInputCount(); i++) {
+        pinMode(getInputPins()[i], INPUT);
     }
 }
 
