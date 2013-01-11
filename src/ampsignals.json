@@ -100,5 +100,15 @@
                 }
             }
         }
+    },
+    "io": {
+        "inputs": {
+            "signals": {
+                "TurnSignalLeft": { "generic_name": "turn_signal_left", "pin": 8 },
+                "TurnSignalRight": { "generic_name": "turn_signal_right", "pin": 9 },
+                "ParkingBrakeActivated": { "generic_name": "parking_brake_activated", "pin": 10 },
+                "SeatbeltWarning": { "generic_name": "seatbelt_warning", "pin": 11 },
+            }
+        }
     }
 }
