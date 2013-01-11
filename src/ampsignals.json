@@ -1,0 +1,104 @@
+{
+    "0x101": {
+        "speed": 500000,
+        "messages": {
+            "0x6D1": {
+                "name": "Vehicle Data",
+                "signals": {
+                    "VehicleSpeed": {
+                        "generic_name": "vehicle_speed",
+                        "bit_position": 0,
+                        "bit_size": 8
+                    },
+                    "AcceleratorPedal": {
+                        "generic_name": "accelerator_pedal",
+                        "bit_position": 8,
+                        "bit_size": 8
+                    },
+                    "Brake": {
+                        "generic_name": "brake_pedal_status",
+                        "bit_position": 16,
+                        "bit_size": 8,
+                        "value_handler": "booleanHandler",
+                        "send_same": false
+                    },
+                    "GearNumber": {
+                        "generic_name": "transmission_gear_position",
+                        "bit_position": 36,
+                        "bit_size": 4,
+                        "offset": -1,
+                        "send_same": false
+                    },
+                    "PRNDPosition": {
+                        "generic_name": "prnd_position",
+                        "bit_position": 34,
+                        "bit_size": 2,
+                        "send_same": false,
+                        "states": {
+                            "PARK": [
+                                3
+                            ],
+                            "REVERSE": [
+                                0
+                            ],
+                            "NEUTRAL": [
+                                1
+                            ],
+                            "DRIVE": [
+                                2
+                            ]
+                        }
+                    },
+                    "KeyPosition": {
+                        "generic_name": "key_position",
+                        "bit_position": 28,
+                        "bit_size": 3,
+                        "send_same": false
+                    },
+                    "KeyCranked": {
+                        "generic_name": "key_cranked",
+                        "bit_position": 31,
+                        "bit_size": 1,
+                        "value_handler": "booleanHandler",
+                        "send_same": false
+                    },
+                    "TransmissionTemp": {
+                        "generic_name": "transmission_temp",
+                        "bit_position": 40,
+                        "bit_size": 8,
+                        "offset": -40
+                    },
+                    "AmbientTemp": {
+                        "generic_name": "ambient_temp",
+                        "bit_position": 48,
+                        "bit_size": 8,
+                        "offset": -40
+                    },
+                    "CoolantTemp": {
+                        "generic_name": "coolant_temp",
+                        "bit_position": 56,
+                        "bit_size": 8,
+                        "offset": -40
+                    }
+                }
+            }
+        }
+    },
+    "0x102": {
+        "speed": 250000,
+        "messages": {
+            "0x0CF00400": {
+                "name": "Electronic Engine Controller 1",
+                "signals": {
+                    "EngSpd": {
+                        "generic_name": "engine_speed",
+                        "send_frequency": 15,
+                        "bit_position": 24,
+                        "bit_size": 16,
+                        "factor": 0.125
+                    }
+                }
+            }
+        }
+    }
+}
