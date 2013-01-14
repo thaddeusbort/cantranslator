@@ -92,12 +92,71 @@
                         "offset": -40
                     }
                 }
+            },
+            "0x627": {
+                "name": "BMS Temps",
+                "signals": {
+                    "CellMaxTemp": {
+                        "generic_name": "battery_temperature",
+                        "bit_position": 32,
+                        "bit_size": 8
+                    }
+                }
+            },
+            "0x62A": {
+                "name": "BMS Voltage",
+                "signals": {
+                    "PackVoltage": {
+                        "generic_name": "pack_voltage",
+                        "bit_position": 0,
+                        "bit_size": 16,
+                        "factor": 0.1
+                    }
+                }
+            },
+            "0x62B": {
+                "name": "BMS Current",
+                "signals": {
+                    "CellMaxTemp": {
+                        "generic_name": "current",
+                        "bit_position": 0,
+                        "bit_size": 16,
+                        "factor": 0.1
+                    }
+                }
             }
         }
     },
     "0x102": {
         "speed": 250000,
         "messages": {
+            "0x18FF0541": {
+                "name": "Electric Vehicle Status",
+                "signals": {
+                    "VehicleMode": {
+                        "generic_name": "vehicle_mode",
+                        "bit_position": 4,
+                        "bit_size": 4,
+                        "states": {
+                            "STANDBY": [
+                                0
+                            ],
+                            "DRIVE": [
+                                1
+                            ],
+                            "PRECHARGE": [
+                                3
+                            ],
+                            "CHARGE": [
+                                4
+                            ],
+                            "CHARGECOMPLETE": [
+                                12
+                            ]
+                        }
+                    }
+                }
+            },
             "0x0CF00400": {
                 "name": "Electronic Engine Controller 1",
                 "signals": {
@@ -110,6 +169,55 @@
                     }
                 }
             },
+            "0x18FEEE00": {
+                "name": "Engine Temperature 1",
+                "signals": {
+                    "MotorTemperature": {
+                        "generic_name": "motor_temperature",
+                        "bit_position": 16,
+                        "bit_size": 16,
+                        "factor": 0.03125,
+                        "offset": -273
+                    }
+                }
+            },
+            "0x18FEF141": {
+                "name": "Cruise Control/Vehicle Speed",
+                "signals": {
+                    "CruiseControlActive": {
+                        "generic_name": "cruise_control_active",
+                        "bit_position": 30,
+                        "bit_size": 2,
+                        "states": {
+                            "OFF": [
+                                0
+                            ],
+                            "ON": [
+                                1
+                            ],
+                            "ERROR": [
+                                2
+                            ]
+                        }
+                    },
+                    "CruiseControlEnabled": {
+                        "generic_name": "cruise_control_enabled",
+                        "bit_position": 28,
+                        "bit_size": 2,
+                        "states": {
+                            "DISABLED": [
+                                0
+                            ],
+                            "ENABLED": [
+                                1
+                            ],
+                            "ERROR": [
+                                2
+                            ]
+                        }
+                    }
+                }
+            },
             "0x18FEFC41": {
                 "name": "Dash Display",
                 "signals": {
@@ -118,6 +226,30 @@
                         "bit_position": 8,
                         "bit_size": 8,
                         "factor": 0.4
+                    }
+                }
+            },
+            "0x18FF0141": {
+                "name": "Charger Temps",
+                "signals": {
+                    "ChargerMaxTemp": {
+                        "generic_name": "charger_temperature",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.03125,
+                        "offset": -273
+                    }
+                }
+            },
+            "0x18FF0441": {
+                "name": "Power Electronics Status",
+                "signals": {
+                    "PowerElectronicsMaxTemp": {
+                        "generic_name": "inverter_temperature",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.03125,
+                        "offset": -273
                     }
                 }
             }
