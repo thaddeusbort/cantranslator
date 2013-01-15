@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "listener.h"
 #include "bitfield.h"
 #include "queue.h"
 #include "cJSON.h"

@@ -8,7 +8,7 @@
                     "OdometerKm": {
                         "generic_name": "odometer",
                         "bit_position": 0,
-                        "bit_sze": 32,
+                        "bit_size": 32,
                         "factor": 0.125
                     }
                 }
