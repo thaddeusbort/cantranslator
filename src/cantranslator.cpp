@@ -29,8 +29,8 @@ void loop() {
     for(int i = 0; i < getCanBusCount(); i++) {
         receiveCan(&getCanBuses()[i]);
     }
-    for(int i = 0; i < getInputCount(); i++) {
-        readInputSignal(getInputPins()[i]);
+    for(int i = 0; i < getIoSignalCount(); i++) {
+        readIoSignal(getIoSignals()[i]);
     }
 
     readFromHost(listener.usb, &receiveWriteRequest);
@@ -49,8 +49,8 @@ void initializeAllCan() {
 }
 
 void initializeAllInputs() {
-    for(int i = 0; i < getInputCount(); i++) {
-        pinMode(getInputPins()[i], INPUT);
+    for(int i = 0; i < getIoSignalCount(); i++) {
+        pinMode(getIoSignals()[i]->pinNumber, INPUT);
     }
 }
 
