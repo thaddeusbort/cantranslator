@@ -95,6 +95,21 @@ CanSignal SIGNALS[SIGNAL_COUNT] = {
     {&CAN_BUSES[1], 0x65, "vehicle_speed", 4, 16, 0.150, -15.50, -100.0, 400.000, 0, true, false, NULL, 0, false, NULL},
 };
 
+
+const int IO_SIGNAL_COUNT = 3;
+IoSignal IO_SIGNALS[IO_SIGNAL_COUNT] = {
+    { "turn_signal_left",   // generic name
+        TRUE,   // this is a digital signal
+        100,    // send every 100ms
+        true,   // send value even if it hasn't changed
+        false,  // this is marked true if the signal has ever been received
+        8       // the IO pin number
+    },
+    { "turn_signal_right", TRUE, 100, true, false, 9 },
+    { "parking_brake_status", TRUE, 100, true, false, 10 },
+};
+
+
 const int COMMAND_COUNT = 0;
 CanCommand COMMANDS[COMMAND_COUNT] = {
 };
@@ -127,6 +142,14 @@ const char* getMessageSet() {
     return "example-2012";
 }
 
+int getIoSignalCount() {
+    return IO_SIGNAL_COUNT;
+}
+
+IoSignal* getIoSignals() {
+    return IO_SIGNALS;
+}
+
 /* See signals.h for full documentation on this method.
  *
  * This approach to processing CAN messages switches on the ID of the message
@@ -149,6 +172,10 @@ void decodeCanMessage(int id, uint64_t data) {
         translateCanSignal(&listener, &SIGNALS[13], data, SIGNALS, SIGNAL_COUNT);
         break;
     }
+}
+
+void readIoSignal(IoSignal* signal) {
+    translateIoSignal(&listener, signal);
 }
 
 CanFilter FILTERS[15];
