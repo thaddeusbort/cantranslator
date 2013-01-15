@@ -16,22 +16,14 @@ bool signalComparator(void* name, int index, void* signals) {
     return !strcmp((const char*)name, ((IoSignal*)signals)[index].genericName);
 }
 
-IoSignal* lookupSignal(const char* name, IoSignal* signals, int signalCount,
-        bool writable) {
+IoSignal* lookupSignal(const char* name, IoSignal* signals, int signalCount) {
     bool (*comparator)(void* key, int index, void* candidates) = signalComparator;
-    if(writable) {
-        comparator = writableSignalComparator;
-    }
     int index = lookup((void*)name, comparator, (void*)signals, signalCount);
     if(index != -1) {
         return &signals[index];
     } else {
         return NULL;
     }
-}
-
-IoSignal* lookupSignal(const char* name, IoSignal* signals, int signalCount) {
-    return lookupSignal(name, signals, signalCount, false);
 }
 
 void translateIoSignal(Listener* listener, IoSignal* signal) {
