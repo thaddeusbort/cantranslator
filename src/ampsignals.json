@@ -261,7 +261,9 @@
                 "TurnSignalLeft": { "generic_name": "turn_signal_left", "pin": 8 },
                 "TurnSignalRight": { "generic_name": "turn_signal_right", "pin": 9 },
                 "ParkingBrakeStatus": { "generic_name": "parking_brake_status", "pin": 10 },
-                "SeatbeltWarning": { "generic_name": "seatbelt_warning", "pin": 11 }
+                "SeatbeltWarning": { "generic_name": "seatbelt_warning", "pin": 11 },
+                "HeadlampStatus": { "generic_name": "headlamp_status", "pin": 12 },
+                "HighbeamStatus": { "generic_name": "high_beam_status", "pin": 13 }
             }
         }
     }
