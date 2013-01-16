@@ -3,37 +3,20 @@
 
 int lookup(void* key,
         bool (*comparator)(void* key, int index, void* candidates),
-        void* candidates, int candidateCount) {
-    for(int i = 0; i < candidateCount; i++) {
-        if(comparator(key, i, candidates)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-bool signalComparator(void* name, int index, void* signals) {
+        void* candidates, int candidateCount);
+        
+bool ioSignalComparator(void* name, int index, void* signals) {
     return !strcmp((const char*)name, ((IoSignal*)signals)[index].genericName);
 }
 
 IoSignal* lookupSignal(const char* name, IoSignal* signals, int signalCount) {
-    bool (*comparator)(void* key, int index, void* candidates) = signalComparator;
+    bool (*comparator)(void* key, int index, void* candidates) = ioSignalComparator;
     int index = lookup((void*)name, comparator, (void*)signals, signalCount);
     if(index != -1) {
         return &signals[index];
     } else {
         return NULL;
     }
-}
-
-void translateIoSignal(Listener* listener, IoSignal* signal) {
-    bool send = true;
-    float value = preTranslateIo(signal, &send);
-    if(send) {
-        //float processedValue = handler(signal, signals, signalCount, value, &send);
-        sendNumericalMessage(signal->genericName, value, &listener);
-    }
-    postTranslateIo(signal, value);
 }
 
 /* Private: Determine if the received signal should be sent out and update
@@ -72,4 +55,14 @@ float preTranslateIo(IoSignal* signal, bool* send) {
  */
 void postTranslateIo(IoSignal* signal, float value) {
     signal->lastValue = value;
+}
+
+void translateIoSignal(Listener* listener, IoSignal* signal) {
+    bool send = true;
+    float value = preTranslateIo(signal, &send);
+    if(send) {
+        //float processedValue = handler(signal, signals, signalCount, value, &send);
+        sendNumericalMessage(signal->genericName, value, listener);
+    }
+    postTranslateIo(signal, value);
 }
