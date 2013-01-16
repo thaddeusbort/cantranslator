@@ -6,6 +6,7 @@
 #include <string.h>
 #include "listener.h"
 #include "bitfield.h"
+#include "canread.h"
 #include "queue.h"
 #include "cJSON.h"
 
