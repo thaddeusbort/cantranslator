@@ -1,22 +1,27 @@
 #include "handlers.h"
 #include "canwrite.h"
+#include "signals.h"
+#include "log.h"
 
 
-float handleTurnSignals(IoSignal* signal, IoSignal* signals, int signalCount, float value, bool* send) {
-    send = FALSE;   // don't send the individual signals only the combined signal
-    bool isLeft = signal->genericName.strcmp("turn_signal_left");
-    IoSignal* otherTurnSignal = lookupSignal("turn_signal_" + (isLeft ? "right" : "left") , signals, signalCount);
+float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* listener) {
+    *send = false;   // don't send the individual signals only the combined signal
+    const char* const RIGHT_NAME = "turn_signal_status";
+    const char* const LEFT_NAME = "turn_signal_left";
+    bool isLeft = strcmp(LEFT_NAME, signal->genericName) == 0;
+    IoSignal* otherTurnSignal;
+    otherTurnSignal = lookupSignal(isLeft? RIGHT_NAME: LEFT_NAME, getIoSignals(), getIoSignalCount());
     
-    char* status;
+    const char* status;
     if(value && otherTurnSignal->lastValue)
         status = "BOTH";
-    else if(value)
-        status = isLeft ? "LEFT" : "RIGHT";
-    else if(otherTurnSignal->lastValue)
-        status = isLeft ? "RIGHT" : "LEFT";
-    else
+    else if(!value && !otherTurnSignal->lastValue)
         status = "OFF";
-    
-    sendNumericalMessage("turn_signal_status", status, listener);
+    else if((isLeft && value) || !(isLeft || value))
+        status = "LEFT";
+    else
+        status = "RIGHT";
+
+    sendStringMessage(RIGHT_NAME, status, listener);
     return value;   // need to return the value so that it gets saved as the lastValue for the signal
 }

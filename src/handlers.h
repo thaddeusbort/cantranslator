@@ -1,9 +1,9 @@
 #ifndef _HANDLERS_H_
 #define _HANDLERS_H_
 
-#include "canread.h"
+#include "ioutil.h"
 
-float handleTurnSignals(CanSignal* signal, CanSignal* signals, int signalCount, float value, bool* send);
+float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* listener);
 
 
 #endif // _HANDLERS_H_
