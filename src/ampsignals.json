@@ -258,8 +258,8 @@
     "io": {
         "inputs": {
             "signals": {
-                "TurnSignalLeft": { "generic_name": "turn_signal_left", "pin": 8 },
-                "TurnSignalRight": { "generic_name": "turn_signal_right", "pin": 9 },
+                "TurnSignalLeft": { "generic_name": "turn_signal_left", "pin": 8, "value_handler": "handleTurnSignals" },
+                "TurnSignalRight": { "generic_name": "turn_signal_status", "pin": 9, "value_handler": "handleTurnSignals" },
                 "ParkingBrakeStatus": { "generic_name": "parking_brake_status", "pin": 10 },
                 "SeatbeltWarning": { "generic_name": "seatbelt_warning", "pin": 11 },
                 "HeadlampStatus": { "generic_name": "headlamp_status", "pin": 12 },
