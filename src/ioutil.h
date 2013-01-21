@@ -54,5 +54,8 @@ IoSignal* lookupSignal(const char* name, IoSignal* signals, int signalCount);
  * signal - The details of the signal to decode and forward.
  */
 void translateIoSignal(Listener* listener, IoSignal* signal);
+void translateIoSignal(Listener* listener,
+            float (*handler)(IoSignal*, float, bool*, Listener* listener),
+            IoSignal* signal);
 
 #endif // _IOUTIL_H_

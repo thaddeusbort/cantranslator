@@ -287,6 +287,8 @@ class Parser(object):
                         self.uses_custom_handlers = True
         for io in self.ios:
             valid = valid and io.validate()
+            if io.handler is not None:
+                self.uses_custom_handlers = True
             
         return valid
 
@@ -458,7 +460,15 @@ class Parser(object):
         print("}\n")
 
         print("void readIoSignal(IoSignal* signal) {")
-        print("    translateIoSignal(&listener, signal);")
+        print("    switch(signal->pinNumber) {")
+        for io in self.ios:
+            if io.handler is not None:
+                print("    case %d: // %s" % (io.pin_number, io.name))
+                print("        translateIoSignal(&listener, %s, signal);" % io.handler) 
+                print("        break;")
+        print("    default:")
+        print("        translateIoSignal(&listener, signal);")
+        print("    }")
         print("}")
         print()
         
