@@ -7,7 +7,10 @@ CanMessage receiveCanMessage(CanBus* bus) {
     CAN::RxMessageBuffer* message = CAN_CONTROLLER(bus)->getRxMessage(
             CAN::CHANNEL1);
 
-    CanMessage result = {bus, message->msgSID.SID, 0};
+    CanMessage result = {bus, message->msgEID.IDE
+                                ? (message->msgSID.SID << 18) | message->msgEID.EID
+                                : message->msgSID.SID
+                        , 0, message->msgEID.IDE};
     result.data = message->data[0];
     result.data |= (((uint64_t)message->data[1]) << 8);
     result.data |= (((uint64_t)message->data[2]) << 16);

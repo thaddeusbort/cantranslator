@@ -76,18 +76,19 @@ class Command(object):
 
 
 class Message(object):
-    def __init__(self, buses, bus_address, id, name, handler=None):
+    def __init__(self, buses, bus_address, id, name, is_xtd=False, handler=None):
         self.bus_address = bus_address
         self.buses = buses
         self.id = int(id, 0)
         self.name = name
+        self.is_xtd = is_xtd
         self.handler = handler
         self.signals = []
 
     def __str__(self):
-        return "{&CAN_BUSES[%d], %d}, // %s" % (
+        return "{&CAN_BUSES[%d], %d, 0, %s}, // %s" % (
                 self._lookupBusIndex(self.buses, self.bus_address),
-                self.id, self.name)
+                self.id, str(self.is_xtd).lower(), self.name)
 
     @staticmethod
     def _lookupBusIndex(buses, bus_address):
@@ -194,7 +195,7 @@ class Io(object):
     def __init__(self, pin_number=None, name=None,
             generic_name=None, is_digital=True,
             handler=None, ignore=False,
-            send_frequency=0, send_same=True,
+            send_frequency=1, send_same=False,
             writable=False, write_handler=None):
         self.pin_number = pin_number
         self.name = name
@@ -483,8 +484,8 @@ class Parser(object):
             print("    case %s:" % bus_address)
             print("        *count = %d;" % len(bus['messages']))
             for i, message in enumerate(bus['messages']):
-                print("        FILTERS[%d] = {%d, 0x%x, %d};" % (
-                        i, i, message.id, 1))
+                print("        FILTERS[%d] = {%d, 0x%x, %d, %s};" % (
+                        i, i, message.id, 1, str(message.is_xtd).lower()))
             print("        break;")
         print("    }")
         print("    return FILTERS;")
@@ -528,7 +529,7 @@ class JsonParser(Parser):
                             io_signal.get('value_handler', None),
                             io_signal.get('ignore', False),
                             io_signal.get('send_frequency', 1),
-                            io_signal.get('send_same', True),
+                            io_signal.get('send_same', False),
                             io_signal.get('writable', False),
                             io_signal.get('write_handler', None)))
                     self.io_signal_count += 1
@@ -547,6 +548,7 @@ class JsonParser(Parser):
                     self.message_count += 1
                     message = Message(self.buses, bus_address, message_id,
                             message_data.get('name', None),
+                            message_data.get('is_xtd', False),
                             message_data.get('handler', None))
                     for signal_name, signal in message_data['signals'].items():
                         states = []

@@ -93,7 +93,7 @@ uint64_t encodeCanSignal(CanSignal* signal, float value, uint64_t data) {
 
 void enqueueCanMessage(CanMessage* message, uint64_t data) {
     CanMessage outgoingMessage = {message->bus, message->id,
-        __builtin_bswap64(data)};
+        __builtin_bswap64(data), message->isXtd};
     QUEUE_PUSH(CanMessage, &message->bus->sendQueue, outgoingMessage);
 }
 
