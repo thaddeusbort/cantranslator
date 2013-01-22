@@ -1,4 +1,5 @@
 #include "canread.h"
+#include "log.h"
 #include <stdlib.h>
 #include "log.h"
 
