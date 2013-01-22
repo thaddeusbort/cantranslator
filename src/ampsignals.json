@@ -131,7 +131,7 @@
         "speed": 250000,
         "messages": {
             "0x18FF0541": {
-                "is_xtd": 1,
+                "is_xtd": true,
                 "name": "Electric Vehicle Status",
                 "signals": {
                     "VehicleMode": {
@@ -158,11 +158,12 @@
                     }
                 }
             },
-            "0x0CF00400": {
-                "is_xtd": 1,
+            "0x0CF00441": {
+                "is_xtd": true,
                 "name": "Electronic Engine Controller 1",
                 "signals": {
                     "EngSpd": {
+                        "little_endian": true,
                         "generic_name": "engine_speed",
                         "send_frequency": 15,
                         "bit_position": 24,
@@ -171,12 +172,13 @@
                     }
                 }
             },
-            "0x18FEEE00": {
-                "is_xtd": 1,
+            "0x18FEEE41": {
+                "is_xtd": true,
                 "name": "Engine Temperature 1",
                 "signals": {
                     "MotorTemperature": {
                         "generic_name": "motor_temperature",
+                        "little_endian": true,
                         "bit_position": 16,
                         "bit_size": 16,
                         "factor": 0.03125,
@@ -185,7 +187,7 @@
                 }
             },
             "0x18FEF141": {
-                "is_xtd": 1,
+                "is_xtd": true,
                 "name": "Cruise Control/Vehicle Speed",
                 "signals": {
                     "CruiseControlActive": {
@@ -223,7 +225,7 @@
                 }
             },
             "0x18FEFC41": {
-                "is_xtd": 1,
+                "is_xtd": true,
                 "name": "Dash Display",
                 "signals": {
                     "FuelLevel": {
@@ -235,7 +237,7 @@
                 }
             },
             "0x18FF0141": {
-                "is_xtd": 1,
+                "is_xtd": true,
                 "name": "Charger Temps",
                 "signals": {
                     "ChargerMaxTemp": {
@@ -248,7 +250,7 @@
                 }
             },
             "0x18FF0441": {
-                "is_xtd": 1,
+                "is_xtd": true,
                 "name": "Power Electronics Status",
                 "signals": {
                     "PowerElectronicsMaxTemp": {
