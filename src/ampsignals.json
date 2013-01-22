@@ -136,25 +136,172 @@
                 "signals": {
                     "VehicleMode": {
                         "generic_name": "vehicle_mode",
-                        "bit_position": 4,
-                        "bit_size": 4,
+                        "bit_position": 5,
+                        "bit_size": 1,
                         "states": {
-                            "STANDBY": [
+                            "DRIVE": [
                                 0
                             ],
-                            "DRIVE": [
-                                1
-                            ],
-                            "PRECHARGE": [
-                                3
-                            ],
                             "CHARGE": [
-                                4
-                            ],
-                            "CHARGECOMPLETE": [
-                                12
+                                1
                             ]
                         }
+                    },
+                    "Precharging": {
+                        "generic_name": "precharge_active",
+                        "bit_position": 6,
+                        "bit_size": 1,
+                        "value_handler": "booleanHandler"
+                    },
+                    "ECMCommFail": {
+                        "generic_name": "ecm_comm_fail",
+                        "bit_position": 8,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "TCMCommFail": {
+                        "generic_name": "tcm_comm_fail",
+                        "bit_position": 9,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "InverterCommFail": {
+                        "generic_name": "inverter_comm_fail",
+                        "bit_position": 10,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "BMSCommFail": {
+                        "generic_name": "bms_comm_fail",
+                        "bit_position": 11,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "ChargerCommFail": {
+                        "generic_name": "charger_comm_fail",
+                        "bit_position": 12,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "MotorOverTemp": {
+                        "generic_name": "motor_over_temp",
+                        "bit_position": 16,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "InverterOverTemp": {
+                        "generic_name": "inverter_over_temp",
+                        "bit_position": 17,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "BatteryOverTemp": {
+                        "generic_name": "battery_over_temp",
+                        "bit_position": 18,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "ChargerOverTemp": {
+                        "generic_name": "charger_over_temp",
+                        "bit_position": 19,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "TransmissionOverTemp": {
+                        "generic_name": "transmission_over_temp",
+                        "bit_position": 20,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "CoolantOverTemp": {
+                        "generic_name": "coolant_over_temp",
+                        "bit_position": 21,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "InverterFault": {
+                        "generic_name": "inverter_fault",
+                        "bit_position": 24,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "BMSFault": {
+                        "generic_name": "bms_fault",
+                        "bit_position": 25,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "ChargerFault": {
+                        "generic_name": "charger_fault",
+                        "bit_position": 26,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "LowVoltageFault": {
+                        "generic_name": "low_voltage_fault",
+                        "bit_position": 27,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "OutOfCalibration": {
+                        "generic_name": "out_of_calibration",
+                        "bit_position": 32,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "GroundFault": {
+                        "generic_name": "ground_fault",
+                        "bit_position": 33,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "HVInterlock": {
+                        "generic_name": "hv_interlock",
+                        "bit_position": 34,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "ContactorWelded": {
+                        "generic_name": "contactor_welded",
+                        "bit_position": 35,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "BatteryContactorOpened": {
+                        "generic_name": "battery_contactor_opened",
+                        "bit_position": 36,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "ChargeContactorOpened": {
+                        "generic_name": "charge_contactor_opened",
+                        "bit_position": 37,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "DriveContactorOpened": {
+                        "generic_name": "drive_contactor_opened",
+                        "bit_position": 38,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "HumidityDetected": {
+                        "generic_name": "humidity_detected",
+                        "bit_position": 39,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "EmergencyStopPressed": {
+                        "generic_name": "estop_pressed",
+                        "bit_position": 48,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
+                    },
+                    "HoodInterlock": {
+                        "generic_name": "hood_interlock",
+                        "bit_position": 49,
+                        "bit_size": 1,
+                        "value_handler": "indicatorHandler"
                     }
                 }
             },
@@ -165,7 +312,6 @@
                     "EngSpd": {
                         "little_endian": true,
                         "generic_name": "engine_speed",
-                        "send_frequency": 15,
                         "bit_position": 24,
                         "bit_size": 16,
                         "factor": 0.125
