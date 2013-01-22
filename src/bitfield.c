@@ -14,6 +14,16 @@ uint64_t bitmask(int numBits) {
     return (0x1 << numBits) - 1;
 }
 
+void reverseBytes(uint64_t* data, int numBytes) {
+    uint8_t* bytes = (uint8_t*)data;
+    int i;
+    for(i=0; i<numBytes/2; ++i) {
+        uint8_t temp = bytes[i];
+        bytes[i] = bytes[numBytes-i-1];
+        bytes[numBytes-i-1] = temp;
+    }
+}
+
 int startingByte(int startBit) {
     return startBit / 8;
 }
@@ -22,7 +32,7 @@ int endingByte(int startBit, int numBits) {
     return (startBit + numBits - 1) / 8;
 }
 
-uint64_t getBitField(uint64_t data, int startBit, int numBits) {
+uint64_t getBitField(uint64_t data, int startBit, int numBits, uint8_t isLittleEndian) {
     int startByte = startingByte(startBit);
     int endByte = endingByte(startBit, numBits);
 
@@ -38,7 +48,10 @@ uint64_t getBitField(uint64_t data, int startBit, int numBits) {
     }
 
     ret >>= 8 - findEndBit(startBit, numBits);
-    return ret & bitmask(numBits);
+    ret = ret & bitmask(numBits);
+    if(0 == numBits % 8 && isLittleEndian)
+        reverseBytes(&ret, numBits / 8);
+    return ret;
 }
 
 /**

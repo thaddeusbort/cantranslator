@@ -118,6 +118,7 @@ struct CanSignal {
     int sendFrequency;
     bool sendSame;
     bool received;
+    bool littleEndian;
     CanSignalState* states;
     int stateCount;
     bool writable;
