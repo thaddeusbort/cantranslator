@@ -9,7 +9,8 @@
                         "generic_name": "odometer",
                         "bit_position": 0,
                         "bit_size": 32,
-                        "factor": 0.125
+                        "factor": 0.125,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -24,21 +25,24 @@
                     "AcceleratorPedal": {
                         "generic_name": "accelerator_pedal",
                         "bit_position": 8,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "ignore": true
                     },
                     "Brake": {
                         "generic_name": "brake_pedal_status",
                         "bit_position": 16,
                         "bit_size": 8,
                         "value_handler": "booleanHandler",
-                        "send_same": false
+                        "send_same": false,
+                        "ignore": true
                     },
                     "GearNumber": {
                         "generic_name": "transmission_gear_position",
                         "bit_position": 36,
                         "bit_size": 4,
                         "offset": -1,
-                        "send_same": false
+                        "send_same": false,
+                        "ignore": true
                     },
                     "PRNDPosition": {
                         "generic_name": "prnd_position",
@@ -64,32 +68,37 @@
                         "generic_name": "key_position",
                         "bit_position": 28,
                         "bit_size": 3,
-                        "send_same": false
+                        "send_same": false,
+                        "ignore": true
                     },
                     "KeyCranked": {
                         "generic_name": "key_cranked",
                         "bit_position": 31,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
-                        "send_same": false
+                        "send_same": false,
+                        "ignore": true
                     },
                     "TransmissionTemp": {
                         "generic_name": "transmission_temp",
                         "bit_position": 40,
                         "bit_size": 8,
-                        "offset": -40
+                        "offset": -40,
+                        "send_frequency": 15
                     },
                     "AmbientTemp": {
                         "generic_name": "ambient_temp",
                         "bit_position": 48,
                         "bit_size": 8,
-                        "offset": -40
+                        "offset": -40,
+                        "send_frequency": 15
                     },
                     "CoolantTemp": {
                         "generic_name": "coolant_temp",
                         "bit_position": 56,
                         "bit_size": 8,
-                        "offset": -40
+                        "offset": -40,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -99,7 +108,8 @@
                     "CellMaxTemp": {
                         "generic_name": "battery_temperature",
                         "bit_position": 32,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -110,7 +120,8 @@
                         "generic_name": "pack_voltage",
                         "bit_position": 0,
                         "bit_size": 16,
-                        "factor": 0.1
+                        "factor": 0.1,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -151,7 +162,7 @@
                         "generic_name": "precharge_active",
                         "bit_position": 6,
                         "bit_size": 1,
-                        "value_handler": "booleanHandler"
+                        "value_handler": "indicatorHandler"
                     },
                     "ECMCommFail": {
                         "generic_name": "ecm_comm_fail",
@@ -328,7 +339,8 @@
                         "bit_position": 16,
                         "bit_size": 16,
                         "factor": 0.03125,
-                        "offset": -273
+                        "offset": -273,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -378,7 +390,8 @@
                         "generic_name": "fuel_level",
                         "bit_position": 8,
                         "bit_size": 8,
-                        "factor": 0.4
+                        "factor": 0.4,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -391,7 +404,8 @@
                         "bit_position": 48,
                         "bit_size": 16,
                         "factor": 0.03125,
-                        "offset": -273
+                        "offset": -273,
+                        "send_frequency": 15
                     }
                 }
             },
@@ -404,7 +418,8 @@
                         "bit_position": 48,
                         "bit_size": 16,
                         "factor": 0.03125,
-                        "offset": -273
+                        "offset": -273,
+                        "send_frequency": 15
                     }
                 }
             }
