@@ -25,3 +25,9 @@ float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* lis
     sendStringMessage(RIGHT_NAME, status, listener);
     return value;   // need to return the value so that it gets saved as the lastValue for the signal
 }
+
+bool indicatorHandler(CanSignal* signal, CanSignal* signals,
+        int signalCount, float value, bool* send) {
+    *send = value || signal->lastValue; // send if value is true or it had been true
+    return value;
+}
