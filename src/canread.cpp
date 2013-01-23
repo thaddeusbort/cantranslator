@@ -166,9 +166,6 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
         float processedValue = handler(signal, signals, signalCount, value,
                 &send);
         if(send) {
-            if(signal->lastValue != value) {
-                debug("%s=%.2f\r\n", signal->genericName, processedValue);
-            }
             sendNumericalMessage(signal->genericName, processedValue, listener);
         }
     }
@@ -185,9 +182,6 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
         const char* stringValue = handler(signal, signals, signalCount, value,
                 &send);
         if(send) {
-            if(signal->lastValue != value) {
-                debug("%s=%s\r\n", signal->genericName, stringValue);
-            }
             sendStringMessage(signal->genericName, stringValue, listener);
         }
     }
@@ -203,9 +197,6 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
     if(send) {
         bool booleanValue = handler(signal, signals, signalCount, value, &send);
         if(send) {
-            if(signal->lastValue != value) {
-                debug("%s=%u\r\n", signal->genericName, booleanValue);
-            }
             sendBooleanMessage(signal->genericName, booleanValue, listener);
         }
     }
