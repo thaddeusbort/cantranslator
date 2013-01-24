@@ -54,6 +54,16 @@ uint64_t getBitField(uint64_t data, int startBit, int numBits, uint8_t isLittleE
     return ret;
 }
 
+int64_t getTwosComplement(uint64_t data, int numBits) {
+    int64_t retVal = data;
+    uint8_t unfilledBits;
+    if(numBits <= 64 && (data & (0x1u << (numBits-1)))) { // if the highest bit is set, we need to extend it
+        unfilledBits = 64-numBits;
+        retVal = data | ~((0x1 << numBits) - 1);
+    }
+    return retVal;
+}
+
 /**
  * TODO it would be nice to have a warning if you call with this a value that
  * won't fit in the number of bits you've specified it should use.

@@ -119,6 +119,7 @@ struct CanSignal {
     bool sendSame;
     bool received;
     bool littleEndian;
+    bool twosComplement;
     CanSignalState* states;
     int stateCount;
     bool writable;

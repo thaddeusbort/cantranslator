@@ -100,7 +100,7 @@ class Message(object):
 class Signal(object):
     def __init__(self, messages=None, message=None, name=None,
             generic_name=None, position=None, length=None, factor=1, offset=0,
-            min_value=0.0, max_value=0.0, handler=None, ignore=False,
+            min_value=0.0, max_value=0.0, twos_complement=False, handler=None, ignore=False,
             states=None, send_frequency=0, send_same=True, little_endian=False,
             writable=False, write_handler=None):
         self.messages = messages
@@ -113,6 +113,7 @@ class Signal(object):
         self.offset = offset
         self.min_value = min_value
         self.max_value = max_value
+        self.twos_complement = twos_complement
         self.handler = handler
         self.writable = writable
         self.write_handler = write_handler
@@ -176,13 +177,14 @@ class Signal(object):
                 return i
 
     def __str__(self):
+    # TODO: add twos_complement
         result =  ("{&CAN_MESSAGES[%d], \"%s\", %s, %d, %f, %f, %f, %f, "
-                    "%d, %s, false, %s, " % (
+                    "%d, %s, false, %s, %s, " % (
                 self._lookupMessageIndex(self.messages, self.message),
                 self.generic_name, self.position, self.length, self.factor,
                 self.offset, self.min_value, self.max_value,
                 self.send_frequency, str(self.send_same).lower(),
-                str(self.little_endian).lower()))
+                str(self.little_endian).lower(), str(self.twos_complement).lower()))
         if len(self.states) > 0:
             result += "SIGNAL_STATES[%d], %d" % (self.states_index,
                     len(self.states))
@@ -576,6 +578,7 @@ class JsonParser(Parser):
                                 signal.get('offset', 0.0),
                                 signal.get('min_value', 0.0),
                                 signal.get('max_value', 0.0),
+                                signal.get('twos_complement', False),
                                 signal.get('value_handler', None),
                                 signal.get('ignore', False),
                                 states,

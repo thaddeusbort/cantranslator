@@ -75,6 +75,10 @@ void postTranslate(CanSignal* signal, float value) {
 float decodeCanSignal(CanSignal* signal, uint64_t data) {
     uint64_t rawValue = getBitField(data, signal->bitPosition,
             signal->bitSize, signal->littleEndian);
+
+    if(signal->twosComplement) {
+        return getTwosComplement(rawValue, signal->bitSize) * signal->factor + signal->offset;
+    }
     return rawValue * signal->factor + signal->offset;
 }
 
