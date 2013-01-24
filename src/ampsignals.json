@@ -48,7 +48,8 @@
                         "generic_name": "prnd_position",
                         "bit_position": 34,
                         "bit_size": 2,
-                        "send_same": false,
+                        "send_same": true,
+                        "send_frequency": 10,
                         "states": {
                             "PARK": [
                                 3
@@ -109,6 +110,7 @@
                         "generic_name": "battery_temperature",
                         "bit_position": 32,
                         "bit_size": 8,
+                        "twos_complement": true,
                         "send_frequency": 15
                     }
                 }
@@ -132,6 +134,7 @@
                         "generic_name": "current",
                         "bit_position": 0,
                         "bit_size": 16,
+                        "twos_complement": true,
                         "factor": 0.1
                     }
                 }
