@@ -25,6 +25,7 @@ boolean usbCallback(USB_EVENT event, void *pdata, word size) {
                 USB_IN_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
         USB_DEVICE.device.EnableEndpoint(USB_DEVICE.outEndpoint,
                 USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
+        onUsbConfigured();
         break;
 
     case EVENT_EP0_REQUEST:

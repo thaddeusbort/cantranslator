@@ -8,7 +8,7 @@
 # don't need to have that installed.
 #
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 KERNEL=`uname`
 HEX_FILE="$1"
 PORT=$2
