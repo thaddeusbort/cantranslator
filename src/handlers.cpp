@@ -31,3 +31,16 @@ bool indicatorHandler(CanSignal* signal, CanSignal* signals,
     *send = value || signal->lastValue; // send if value is true or it had been true
     return value;
 }
+
+void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener) {
+    // check if Byte1 is 0x49 and Byte2 is 0-2
+    // decode the value and concatenate it until we have the whole VIN
+}
+bool handleRequestForVINCommand(const char* name, cJSON* value, cJSON* event, CanSignal* signals, int signalCount) {
+    // build CanSignal with ID 0x7E0, byte1 09, byte2 02
+    //CanSignal* signal = NULL;
+    //if(signal != NULL) {
+    //    return sendCanSignal(signal, cJSON_CreateBool(true), booleanWriter, signals, signalCount);
+    //}
+    return false;
+}

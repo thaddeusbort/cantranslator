@@ -1,7 +1,16 @@
 {
     "0x101": {
         "speed": 500000,
+        "commands": {
+            "vin_request": {
+                "handler": "handleRequestForVINCommand"
+            }
+        },
         "messages": {
+            "0x7E8": {
+                "name": "VIN",
+                "handler": "handleVINMessage"
+            },
             "0x6D0": {
                 "name": "Odometer",
                 "signals": {
