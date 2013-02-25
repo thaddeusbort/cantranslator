@@ -1,12 +1,19 @@
 {
     "0x101": {
         "speed": 500000,
-        "commands": {
-            "vin_request": {
-                "handler": "handleRequestForVINCommand"
-            }
-        },
         "messages": {
+            "0x7E0": {
+                "name": "VIN Request",
+                "signals": {
+                    "VinRequest": {
+                        "generic_name": "vin_request",
+                        "bit_position": 0,
+                        "bit_size": 16,
+                        "ignore": true,
+                        "writable": true
+                    }
+                }
+            },
             "0x7E8": {
                 "name": "VIN",
                 "handler": "handleVINMessage"
