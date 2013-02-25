@@ -558,37 +558,38 @@ class JsonParser(Parser):
 
                 for message_id, message_data in bus_data.get('messages', {}
                         ).items():
-                    self.signal_count += len(message_data['signals'])
                     self.message_count += 1
                     message = Message(self.buses, bus_address, message_id,
                             message_data.get('name', None),
                             message_data.get('is_xtd', False),
                             message_data.get('handler', None))
-                    for signal_name, signal in message_data['signals'].items():
-                        states = []
-                        for name, raw_matches in signal.get('states', {}).items():
-                            for raw_match in raw_matches:
-                                states.append(SignalState(raw_match, name))
-                        message.signals.append(Signal(
-                                self.buses[bus_address]['messages'],
-                                message,
-                                signal_name,
-                                signal.get('generic_name', None),
-                                signal.get('bit_position', None),
-                                signal.get('bit_size', None),
-                                signal.get('factor', 1.0),
-                                signal.get('offset', 0.0),
-                                signal.get('min_value', 0.0),
-                                signal.get('max_value', 0.0),
-                                signal.get('twos_complement', False),
-                                signal.get('value_handler', None),
-                                signal.get('ignore', False),
-                                states,
-                                signal.get('send_frequency', 1),
-                                signal.get('send_same', True),
-                                signal.get('little_endian', False),
-                                signal.get('writable', False),
-                                signal.get('write_handler', None)))
+                    if 'signals' in message_data:
+                        self.signal_count += len(message_data['signals'])
+                        for signal_name, signal in message_data['signals'].items():
+                            states = []
+                            for name, raw_matches in signal.get('states', {}).items():
+                                for raw_match in raw_matches:
+                                    states.append(SignalState(raw_match, name))
+                            message.signals.append(Signal(
+                                    self.buses[bus_address]['messages'],
+                                    message,
+                                    signal_name,
+                                    signal.get('generic_name', None),
+                                    signal.get('bit_position', None),
+                                    signal.get('bit_size', None),
+                                    signal.get('factor', 1.0),
+                                    signal.get('offset', 0.0),
+                                    signal.get('min_value', 0.0),
+                                    signal.get('max_value', 0.0),
+                                    signal.get('twos_complement', False),
+                                    signal.get('value_handler', None),
+                                    signal.get('ignore', False),
+                                    states,
+                                    signal.get('send_frequency', 1),
+                                    signal.get('send_same', True),
+                                    signal.get('little_endian', False),
+                                    signal.get('writable', False),
+                                    signal.get('write_handler', None)))
                     self.buses[bus_address]['messages'].append(message)
 
 def main():
