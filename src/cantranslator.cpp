@@ -8,6 +8,7 @@
 #include "log.h"
 #include "cJSON.h"
 #include "listener.h"
+#include "handlers.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -40,6 +41,7 @@ void loop() {
     for(int i = 0; i < getCanBusCount(); i++) {
         processCanWriteQueue(&getCanBuses()[i]);
     }
+    customLoopHandler();
 }
 
 void initializeAllCan() {
