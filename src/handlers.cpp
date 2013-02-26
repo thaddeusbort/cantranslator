@@ -42,13 +42,13 @@ void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int sign
         char oldVin[18];
         strcpy(oldVin, mVin);
         switch(byteData[1]) {
-        case 1:
+        case 0:
             memcpy(mVin, byteData+2, 6);
             break;
-        case 2:
+        case 1:
             memcpy(mVin+6, byteData+2, 6);
             break;
-        case 3:
+        case 2:
             memcpy(mVin+12, byteData+2, 5);
             break;
         }
