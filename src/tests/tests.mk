@@ -13,7 +13,7 @@ INCLUDE_PATHS += -I. -I./libs/cJSON
 
 TESTABLE_OBJ_FILES = bitfield.o queue.o canutil.o canwrite.o canread.o \
 				listener.o libs/cJSON/cJSON.o buffers.o strutil.o usbutil.o \
-				serialutil.o ethernetutil.o
+				serialutil.o ethernetutil.o shared_handlers.o
 TESTABLE_LIB_SRCS = usbutil_mock.c serialutil_mock.c \
 				canwrite_mock.c log_mock.c ethernetutil_mock.c
 TESTABLE_LIB_OBJ_FILES = $(addprefix $(TEST_OBJDIR)/$(TEST_DIR)/, $(TESTABLE_LIB_SRCS:.c=.o))
@@ -126,6 +126,7 @@ code_generation_test:
 	../script/generate_code.py --json signals.json.example > $(TEST_OBJDIR)/signals.cpp
     # Ideally we would symlink these files, but symlinks don't work well in Cygwin
 	@cp $(TEST_OBJDIR)/signals.cpp signals.cpp
+	@rm -f handlers.h handlers.cpp
 	@cp handlers.cpp.example handlers.cpp
 	@cp handlers.h.example handlers.h
 

@@ -9,6 +9,15 @@ import sys
 import argparse
 
 
+# Only works with 2 CAN buses since we are limited by 2 CAN controllers,
+# and we want to be a little careful that we always expect 0x101 to be
+# plugged into the CAN1 controller and 0x102 into CAN2.
+VALID_BUS_ADDRESSES = ("0x101", "0x102")
+
+def fatal_error(message):
+    sys.stderr.write("ERROR: %s\n" % message)
+    sys.exit(1)
+
 def parse_options():
     parser = argparse.ArgumentParser(description="Generate C source code from "
             "CAN signal descriptions in JSON")
@@ -92,9 +101,11 @@ class Message(object):
 
     @staticmethod
     def _lookupBusIndex(buses, bus_address):
-        for bus_number, candidate_bus_address in enumerate(("0x101", "0x102")):
+        for bus_number, candidate_bus_address in enumerate(VALID_BUS_ADDRESSES):
             if candidate_bus_address == bus_address:
                 return bus_number
+        fatal_error("Bus address %s is invalid, only %s and %s are allowed" %
+                (bus_address, VALID_BUS_ADDRESSES[0], VALID_BUS_ADDRESSES[1]))
 
 
 class Signal(object):
@@ -311,16 +322,12 @@ class Parser(object):
 
     def print_source(self):
         if not self.validate_messages() or not self.validate_name():
-            sys.stderr.write("ERROR: unable to generate code")
-            sys.exit(1)
+            fatal_error("unable to generate code")
         self.print_header()
 
         print("const int CAN_BUS_COUNT = %d;" % len(self.buses))
         print("CanBus CAN_BUSES[CAN_BUS_COUNT] = {")
-        # Only works with 2 CAN buses since we are limited by 2 CAN controllers,
-        # and we want to be a little careful that we always expect 0x101 to be
-        # plugged into the CAN1 controller and 0x102 into CAN2.
-        for bus_number, bus_address in enumerate(("0x101", "0x102")):
+        for bus_number, bus_address in enumerate(VALID_BUS_ADDRESSES):
             bus = self.buses.get(bus_address, None)
             if bus is not None:
                 self._print_bus_struct(bus_address, bus, bus_number + 1)
@@ -524,10 +531,8 @@ class JsonParser(Parser):
                 try:
                     data = json.load(json_file)
                 except ValueError as e:
-                    sys.stderr.write(
-                            "ERROR: %s does not contain valid JSON: \n%s\n"
-                            % (filename, e))
-                    sys.exit(1)
+                    fatal_error("%s does not contain valid JSON: \n%s\n" %
+                            (filename, e))
                 merged_dict = merge(merged_dict, data)
 
         self.commands = []
@@ -548,7 +553,12 @@ class JsonParser(Parser):
                             io_signal.get('write_handler', None)))
                     self.io_signal_count += 1
             else:
-                self.buses[bus_address]['speed'] = bus_data['speed']
+                speed = bus_data.get('speed', None)
+                if speed is None:
+                    fatal_error("Bus %s is missing the 'speed' attribute" %
+                            bus_address)
+                    sys.exit(1)
+                self.buses[bus_address]['speed'] = speed
                 self.buses[bus_address].setdefault('messages', [])
                 for command_id, command_data in bus_data.get(
                         'commands', {}).items():

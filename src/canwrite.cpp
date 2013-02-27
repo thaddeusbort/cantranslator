@@ -10,20 +10,41 @@ void checkWritePermission(CanSignal* signal, bool* send) {
 }
 
 uint64_t booleanWriter(CanSignal* signal, CanSignal* signals,
+        int signalCount, bool value, bool* send) {
+    return booleanWriter(signal, signals, signalCount, value, send, 0);
+}
+
+uint64_t booleanWriter(CanSignal* signal, CanSignal* signals,
+        int signalCount, bool value, bool* send, uint64_t data) {
+    checkWritePermission(signal, send);
+    return encodeCanSignal(signal, value, data);
+}
+
+uint64_t booleanWriter(CanSignal* signal, CanSignal* signals,
         int signalCount, cJSON* value, bool* send) {
     return booleanWriter(signal, signals, signalCount, value, send, 0);
 }
 
 uint64_t booleanWriter(CanSignal* signal, CanSignal* signals,
         int signalCount, cJSON* value, bool* send, uint64_t data) {
-    checkWritePermission(signal, send);
     int intValue = 0;
     if(value->type == cJSON_False) {
         intValue = 0;
     } else if(value->type == cJSON_True) {
         intValue = 1;
     }
-    return encodeCanSignal(signal, intValue, data);
+    return booleanWriter(signal, signals, signalCount, intValue, send, 0);
+}
+
+uint64_t numberWriter(CanSignal* signal, CanSignal* signals,
+        int signalCount, double value, bool* send) {
+    return numberWriter(signal, signals, signalCount, value, send, 0);
+}
+
+uint64_t numberWriter(CanSignal* signal, CanSignal* signals,
+        int signalCount, double value, bool* send, uint64_t data) {
+    checkWritePermission(signal, send);
+    return encodeCanSignal(signal, value, data);
 }
 
 uint64_t numberWriter(CanSignal* signal, CanSignal* signals,
@@ -33,8 +54,8 @@ uint64_t numberWriter(CanSignal* signal, CanSignal* signals,
 
 uint64_t numberWriter(CanSignal* signal, CanSignal* signals,
         int signalCount, cJSON* value, bool* send, uint64_t data) {
-    checkWritePermission(signal, send);
-    return encodeCanSignal(signal, value->valuedouble, data);
+    return numberWriter(signal, signals, signalCount, value->valuedouble,
+            send, 0);
 }
 
 uint64_t stateWriter(CanSignal* signal, CanSignal* signals,
@@ -99,14 +120,24 @@ void enqueueCanMessage(CanMessage* message, uint64_t data) {
 
 bool sendCanSignal(CanSignal* signal, cJSON* value, CanSignal* signals,
         int signalCount) {
-    uint64_t (*writer)(CanSignal*, CanSignal*, int, cJSON*, bool*)
-        = signal->writeHandler;
-    return sendCanSignal(signal, value, writer, signals, signalCount);
+    return sendCanSignal(signal, value, signals, signalCount, false);
+}
+
+bool sendCanSignal(CanSignal* signal, cJSON* value, CanSignal* signals,
+        int signalCount, bool force) {
+    return sendCanSignal(signal, value, signal->writeHandler, signals,
+            signalCount, force);
 }
 
 bool sendCanSignal(CanSignal* signal, cJSON* value,
         uint64_t (*writer)(CanSignal*, CanSignal*, int, cJSON*, bool*),
         CanSignal* signals, int signalCount) {
+    return sendCanSignal(signal, value, writer, signals, signalCount, false);
+}
+
+bool sendCanSignal(CanSignal* signal, cJSON* value,
+        uint64_t (*writer)(CanSignal*, CanSignal*, int, cJSON*, bool*),
+        CanSignal* signals, int signalCount, bool force) {
     if(writer == NULL) {
         if(signal->stateCount > 0) {
             writer = stateWriter;
@@ -117,8 +148,10 @@ bool sendCanSignal(CanSignal* signal, cJSON* value,
 
     bool send = true;
     uint64_t data = writer(signal, signals, signalCount, value, &send);
-    if(send) {
+    if(force || send) {
         enqueueCanMessage(signal->message, data);
+    } else {
+        debug("Writing not allowed for signal with name %s\r\n", signal->genericName);
     }
     return send;
 }

@@ -11,7 +11,7 @@
 #define CAN_RX_PIN_NUM(BUS) (BUS == LPC_CAN1 ? 21 : 4)
 #define CAN_TX_PIN_NUM(BUS) (BUS == LPC_CAN1 ? 22 : 5)
 #define CAN_PORT_NUM(BUS) 0
-#define CAN_FUNCNUM 2
+#define CAN_FUNCNUM 3
 
 CAN_ERROR configureFilters(CanBus* bus, CanFilter* filters, int filterCount) {
     if(filterCount > 0) {
@@ -27,7 +27,7 @@ CAN_ERROR configureFilters(CanBus* bus, CanFilter* filters, int filterCount) {
     } else {
         debug("No filters configured, turning off acceptance filter\r\n");
         // disable acceptable filter so we get all messages
-        CAN_SetAFMode(LPC_CANAF, CAN_AccOff);
+        CAN_SetAFMode(LPC_CANAF, CAN_AccBP);
         return CAN_OK;
     }
 }
@@ -45,8 +45,17 @@ void configureCanControllerPins(LPC_CAN_TypeDef* controller) {
     PINSEL_ConfigPin(&PinCfg);
 }
 
+void configureTransceiver() {
+    // make P0.19 high to make sure the TJ1048T is awake
+    LPC_GPIO0->FIODIR |= 1 << 19;
+    LPC_GPIO0->FIOPIN |= 1 << 19;
+    LPC_GPIO0->FIODIR |= 1 << 6;
+    LPC_GPIO0->FIOPIN |= 1 << 6;
+}
+
 void initializeCan(CanBus* bus) {
     configureCanControllerPins(CAN_CONTROLLER(bus));
+    configureTransceiver();
 
     CAN_Init(CAN_CONTROLLER(bus), bus->speed);
     CAN_ModeConfig(CAN_CONTROLLER(bus), CAN_OPERATING_MODE, ENABLE);
