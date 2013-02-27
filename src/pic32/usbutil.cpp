@@ -1,6 +1,7 @@
 #include "usbutil.h"
 #include "buffers.h"
 #include "log.h"
+#include "handlers.h"
 
 #define USB_PACKET_SIZE 64
 

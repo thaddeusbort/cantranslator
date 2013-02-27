@@ -79,3 +79,19 @@ void customLoopHandler() {
         requestVIN();
     }
 }
+
+void onUsbConfigured() {
+// resend all the CAN signals and IO signals after USB is connected
+    CanSignal* canSignals = getSignals();
+    int count = getSignalCount();
+    int idx;
+    for(idx=0; idx<count; ++idx) {
+        canSignals[idx].received = false;
+    }
+
+    IoSignal* ioSignals = getIoSignals();
+    count = getIoSignalCount();
+    for(idx=0; idx<count; ++idx) {
+        ioSignals[idx].received = false;
+    }
+}

@@ -8,5 +8,7 @@ bool indicatorHandler(CanSignal* signal, CanSignal* signals, int signalCount, fl
 void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener);
 bool handleRequestForVINCommand(const char* name, cJSON* value, cJSON* event, CanSignal* signals, int signalCount);
 void customLoopHandler(void);
+// callback when usb is configured
+void onUsbConfigured();
 
 #endif // _HANDLERS_H_

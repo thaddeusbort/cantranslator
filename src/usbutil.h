@@ -56,9 +56,6 @@ typedef struct {
  */
 void initializeUsbCommon(UsbDevice*);
 
-// callback when usb is configured
-void onUsbConfigured();
-
 /* Public: Initializes the USB controller as a full-speed device with the
  * configuration specified in usb_descriptors.c. Must be called before
  * any other USB fuctions are used.
