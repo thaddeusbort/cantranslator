@@ -4,6 +4,7 @@
 #include "log.h"
 
 char mVin[18] = { '\0' };
+const char* const VIN = "VIN";
 
 float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* listener) {
     *send = false;   // don't send the individual signals only the combined signal
@@ -36,7 +37,6 @@ bool indicatorHandler(CanSignal* signal, CanSignal* signals,
 void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener) {
     // check if Byte1 is 0x49 and Byte2 is 0-2
     // decode the value and concatenate it until we have the whole VIN
-    const char* const VIN = "VIN";
     char* byteData = (char*)&data;
     if(byteData[0] == 0x48) {
         char oldVin[18];
@@ -94,4 +94,6 @@ void onUsbConfigured() {
     for(idx=0; idx<count; ++idx) {
         ioSignals[idx].received = false;
     }
+
+    memset(mVin, '\0', 18); // reset the vin
 }
