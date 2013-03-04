@@ -1,5 +1,6 @@
 #include "canread.h"
 #include <stdlib.h>
+#include "log.h"
 
 /* Private: Serialize the root JSON object to a string (ending with a newline)
  * and send it to the listener.
@@ -105,7 +106,7 @@ const char* stateHandler(CanSignal* signal, CanSignal* signals,
     if(signalState != NULL) {
         return signalState->name;
     }
-    // TODO these send values aren't using anywhere when reading!
+    debug("No signal state found for value %d", value);
     *send = false;
     return NULL;
 }
@@ -185,7 +186,10 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
     if(send) {
         const char* stringValue = handler(signal, signals, signalCount, value,
                 &send);
-        if(send) {
+        if(stringValue == NULL) {
+            debug("No valid string returned from handler for %s",
+                    signal->genericName);
+        } else if(send) {
             sendStringMessage(signal->genericName, stringValue, listener);
         }
     }

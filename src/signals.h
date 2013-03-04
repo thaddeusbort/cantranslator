@@ -54,10 +54,11 @@ const char* getMessageSet();
  * by getSignals(), this function is called with the message ID and 64-bit data
  * field.
  *
+ * bus - The CAN bus this message was received on.
  * id - The 11-bit ID of the incoming CAN message.
  * data - The 64-bit data field of the CAN message.
  */
-void decodeCanMessage(int id, uint64_t data);
+void decodeCanMessage(CanBus* bus, int id, uint64_t data);
 
 /* Public: Read Input signal from pin and send the resulting value over USB
  * as an OpenXC-style JSON message.

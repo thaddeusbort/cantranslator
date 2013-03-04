@@ -1,5 +1,29 @@
 # OpenXC CAN Translator Changelog
 
+## v3.0
+
+* BREAKING CHANGE: Combine `odometer` and `fine_odometer_since` restart into a
+  single high-precision signal, `odometer`. There is no more
+  fine_odometer_since_restart signal.
+* BREAKING CHANGE: `decodeCanMessage` in signals.h now is pass the `CanBus` the
+  message was received on; signals.cpp files will need to be updated.
+* PIC32: UART output at high baud rates (i.e. above 115200).
+* PIC32: Detect if USB is actually attached to avoid wasting time - speeds up
+  UART dramatically if micro-USB 5v line connected to Analog Input 0 instead of
+  5v port on chipKIT Network Shield.
+* Slow down emulator to better match a real vehicle's throughput.
+* For mappings with "ignore" flag, code generator for signals.cpp will set
+  signals handlers to `ignoreHandler` instead of skipping entirely.
+* CAN messages with identical IDs can now exist on both CAN1 and CAN2.
+
+## v2.1.3
+
+* Remove custom protocol for "binary" transfers - use "passthrough" JSON style.
+* Fix a NULL pointer dereference in the button handler that caused hard crashes
+  when CAN2 was connected.
+* Calculate correct value for rolling fuel consumed value, it incremented too
+  fast previously in some vehicles.
+
 ## v2.1.2
 
 * Use bootstrap script when flashing binary firmware.

@@ -52,10 +52,10 @@ set -e
 
 echo "Installing dependencies for running test suite..."
 
-if [ $OS != "cygwin" ] && ! command -v lcov >/dev/null 2>&1; then
-    # TODO the text here isn't exactly right for how the conditional works now
-    echo "Missing lcov - Cygwin doesn't have a packaged version of lcov, and it's only required to calculate test suite coverage. We'll skip it."
-    if [ $OS == "mac" ]; then
+if [ -z $CI ] && ! command -v lcov >/dev/null 2>&1; then
+    if [ $OS == "cygwin" ]; then
+        echo "Missing lcov - Cygwin doesn't have a packaged version of lcov, and it's only required to calculate test suite coverage. We'll skip it."
+    elif [ $OS == "mac" ]; then
         brew install lcov
     else
         if [ $DISTRO == "arch" ]; then
@@ -200,11 +200,11 @@ if ! command -v arm-none-eabi-gcc >/dev/null 2>&1; then
     if [ $OS == "cygwin" ]; then
         GCC_INNER_DIR="$PROGRAM_FILES_BASE/$PROGRAM_FILES_64/$TRAILING_DIRNAME"
         if ! test -d "$GCC_INNER_DIR"; then
-	    GCC_INNER_DIR="$PROGRAM_FILES_BASE/$PROGRAM_FILES/$TRAILING_DIRNAME"
-	    if ! test -d "$GCC_INNER_DIR"; then
-	        die "GCC for ARM isn't installed in the expected location."
-	    fi
-	fi
+            GCC_INNER_DIR="$PROGRAM_FILES_BASE/$PROGRAM_FILES/$TRAILING_DIRNAME"
+            if ! test -d "$GCC_INNER_DIR"; then
+                die "GCC for ARM isn't installed in the expected location."
+            fi
+        fi
     fi
 
     if ! test -d arm-none-eabi; then

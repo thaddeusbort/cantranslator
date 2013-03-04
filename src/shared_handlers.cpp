@@ -3,7 +3,8 @@
 #include "log.h"
 
 float rotationsSinceRestart = 0;
-float odometerSinceRestart = 0;
+float rollingOdometerSinceRestart = 0;
+float totalOdometerAtRestart = 0;
 float fuelConsumedSinceRestartLiters = 0;
 
 void sendDoorStatus(const char* doorId, uint64_t data, CanSignal* signal,
@@ -44,27 +45,45 @@ void handleDoorStatusMessage(int messageId, uint64_t data, CanSignal* signals,
             signals, signalCount, listener);
 }
 
-float handleRollingOdometer(CanSignal* signal, CanSignal* signals,
-       int signalCount, float value, bool* send) {
-    if(value < signal->lastValue) {
-        odometerSinceRestart +=
-                signal->maxValue - signal->lastValue + value;
-    } else {
-        odometerSinceRestart += value - signal->lastValue;
+float firstReceivedOdometerValue(CanSignal* signals, int signalCount) {
+    if(totalOdometerAtRestart == 0) {
+        CanSignal* odometerSignal = lookupSignal("total_odometer", signals,
+                signalCount);
+        if(odometerSignal != NULL && odometerSignal->received) {
+            totalOdometerAtRestart = odometerSignal->lastValue;
+        }
     }
-    return odometerSinceRestart;
+    return totalOdometerAtRestart;
+}
+
+float handleRollingOdometer(CanSignal* signal, CanSignal* signals,
+       int signalCount, float value, bool* send, float factor) {
+    if(value < signal->lastValue) {
+        rollingOdometerSinceRestart += signal->maxValue - signal->lastValue
+            + value;
+    } else {
+        rollingOdometerSinceRestart += value - signal->lastValue;
+    }
+
+    return firstReceivedOdometerValue(signals, signalCount) +
+        (factor * rollingOdometerSinceRestart);
+}
+
+float handleRollingOdometerKilometers(CanSignal* signal, CanSignal* signals,
+       int signalCount, float value, bool* send) {
+    return handleRollingOdometer(signal, signals, signalCount, value, send, 1);
 }
 
 float handleRollingOdometerMiles(CanSignal* signal, CanSignal* signals,
        int signalCount, float value, bool* send) {
-    return KM_PER_MILE * handleRollingOdometer(signal, signals, signalCount,
-            value, send);
+    return handleRollingOdometer(signal, signals, signalCount, value, send,
+            KM_PER_MILE);
 }
 
 float handleRollingOdometerMeters(CanSignal* signal, CanSignal* signals,
        int signalCount, float value, bool* send) {
-    return KM_PER_M * handleRollingOdometer(signal, signals, signalCount, value,
-            send);
+    return handleRollingOdometer(signal, signals, signalCount, value, send,
+            KM_PER_M);
 }
 
 bool handleStrictBoolean(CanSignal* signal, CanSignal* signals, int signalCount,
@@ -78,9 +97,9 @@ bool handleStrictBoolean(CanSignal* signal, CanSignal* signals, int signalCount,
 float handleFuelFlow(CanSignal* signal, CanSignal* signals, int signalCount,
         float value, bool* send, float multiplier) {
     if(value < signal->lastValue) {
-        value += signal->maxValue - signal->lastValue + value;
+        value = signal->maxValue - signal->lastValue + value;
     } else {
-        value += value - signal->lastValue;
+        value = value - signal->lastValue;
     }
     fuelConsumedSinceRestartLiters += multiplier * value;
     return fuelConsumedSinceRestartLiters;
@@ -147,7 +166,7 @@ float handleUnsignedSteeringWheelAngle(CanSignal* signal,
             signals, signalCount);
 
     if(steeringAngleSign == NULL) {
-        debug("Unable to find stering wheel angle sign signal\r\n");
+        debug("Unable to find stering wheel angle sign signal");
         *send = false;
     } else {
         if(steeringAngleSign->lastValue == 0) {
@@ -165,7 +184,8 @@ float handleMultisizeWheelRotationCount(CanSignal* signal, CanSignal* signals,
     } else {
         rotationsSinceRestart += value - signal->lastValue;
     }
-    return 2 * PI * wheelRadius * rotationsSinceRestart;
+    return firstReceivedOdometerValue(signals, signalCount) + (2 * PI *
+            wheelRadius * rotationsSinceRestart);
 }
 
 void handleButtonEventMessage(int messageId, uint64_t data,
@@ -176,7 +196,7 @@ void handleButtonEventMessage(int messageId, uint64_t data,
             signalCount);
 
     if(buttonTypeSignal == NULL || buttonStateSignal == NULL) {
-        debug("Unable to find button type and state signals\r\n");
+        debug("Unable to find button type and state signals");
         return;
     }
 
@@ -187,7 +207,7 @@ void handleButtonEventMessage(int messageId, uint64_t data,
     const char* buttonType = stateHandler(buttonTypeSignal, signals,
             signalCount, rawButtonType, &send);
     if(!send || buttonType == NULL) {
-        debug("Unable to find button type corresponding to %f\r\n",
+        debug("Unable to find button type corresponding to %f",
                 rawButtonType);
         return;
     }
@@ -195,12 +215,12 @@ void handleButtonEventMessage(int messageId, uint64_t data,
     const char* buttonState = stateHandler(buttonStateSignal, signals,
             signalCount, rawButtonState, &send);
     if(!send || buttonState == NULL) {
-        debug("Unable to find button state corresponding to %f\r\n",
+        debug("Unable to find button state corresponding to %f",
                 rawButtonState);
         return;
     }
 
-    sendEventedBooleanMessage(BUTTON_EVENT_GENERIC_NAME, buttonType,
+    sendEventedStringMessage(BUTTON_EVENT_GENERIC_NAME, buttonType,
             buttonState, listener);
 }
 
@@ -218,7 +238,7 @@ bool handleTurnSignalCommand(const char* name, cJSON* value, cJSON* event,
         return sendCanSignal(signal, cJSON_CreateBool(true), booleanWriter,
                 signals, signalCount, true);
     } else {
-        debug("Unable to find signal for %s turn signal\r\n", direction);
+        debug("Unable to find signal for %s turn signal", direction);
     }
     return false;
 }

@@ -128,7 +128,8 @@ class Signal(object):
         self.handler = handler
         self.writable = writable
         self.write_handler = write_handler
-        self.ignore = ignore
+        if ignore:
+            self.handler = "ignoreHandler"
         self.array_index = 0
         # the frequency determines how often the message should be propagated. a
         # frequency of 1 means that every time the signal it is received we will
@@ -443,26 +444,29 @@ class Parser(object):
         print("}")
         print()
 
-        print("void decodeCanMessage(int id, uint64_t data) {")
-        print("    switch (id) {")
-        for bus in list(self.buses.values()):
+        print("void decodeCanMessage(CanBus* bus, int id, uint64_t data) {")
+        print("    switch(bus->address) {")
+        for bus_address, bus in self.buses.items():
+            print("    case %s:" % bus_address)
+            print("        switch (id) {")
             for message in bus['messages']:
-                print("    case 0x%x: // %s" % (message.id, message.name))
+                print("        case 0x%x: // %s" % (message.id, message.name))
                 if message.handler is not None:
-                    print(("        %s(id, data, SIGNALS, " % message.handler +
-                            "SIGNAL_COUNT, &listener);"))
-                for signal in (s for s in message.signals if not s.ignore):
+                    print(("            %s(id, data, SIGNALS, " %
+                        message.handler + "SIGNAL_COUNT, &listener);"))
+                for signal in (s for s in message.signals):
                     if signal.handler:
-                        print(("        translateCanSignal(&listener, "
+                        print(("            translateCanSignal(&listener, "
                                 "&SIGNALS[%d], data, " % signal.array_index +
                                 "&%s, SIGNALS, SIGNAL_COUNT); // %s" % (
                                 signal.handler, signal.name)))
                     else:
-                        print(("        translateCanSignal(&listener, "
+                        print(("            translateCanSignal(&listener, "
                                 "&SIGNALS[%d], " % signal.array_index +
                                 "data, SIGNALS, SIGNAL_COUNT); // %s"
                                     % signal.name))
-                print("        break;")
+                print("            break;")
+            print("        }")
         print("    }")
 
         if self._message_count() == 0:
