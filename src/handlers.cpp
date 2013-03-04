@@ -54,7 +54,7 @@ void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int sign
         }
         if(strcmp(oldVin, mVin) && strlen(mVin) == 17) {
             sendStringMessage(VIN, mVin, listener);
-            debug("VIN: %s, %d, %d\r\n", mVin, strcmp(oldVin, mVin), strlen(mVin));
+            debug("VIN: %s, %d, %d", mVin, strcmp(oldVin, mVin), strlen(mVin));
         }
     }
 }

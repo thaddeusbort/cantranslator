@@ -70,7 +70,7 @@ void translateIoSignal(Listener* listener,
         float processedValue = handler(signal, value, &send, listener);
         //float processedValue = handler(signal, signals, signalCount, value, &send);
         if(send) {
-            debug("%s=%.0f\r\n", signal->genericName, value);
+            debug("%s=%.0f", signal->genericName, value);
             sendNumericalMessage(signal->genericName, value, listener);
         }
     }
