@@ -122,8 +122,22 @@
             "0x627": {
                 "name": "BMS Temps",
                 "signals": {
+                    "AvgPackTemp": {
+                        "generic_name": "avg_pack_temp",
+                        "bit_position": 0,
+                        "bit_size": 8,
+                        "twos_complement": true,
+                        "send_frequency": 15
+                    },
+                    "CellMinTemp": {
+                        "generic_name": "cell_min_temp",
+                        "bit_position": 16,
+                        "bit_size": 8,
+                        "twos_complement": true,
+                        "send_frequency": 15
+                    },
                     "CellMaxTemp": {
-                        "generic_name": "battery_temperature",
+                        "generic_name": "cell_max_temp",
                         "bit_position": 32,
                         "bit_size": 8,
                         "twos_complement": true,
@@ -131,8 +145,28 @@
                     }
                 }
             },
+            "0x628": {
+                "name": "BMS Resistance",
+                "signals": {
+                    "PackResistance": {
+                        "generic_name": "pack_resistance",
+                        "bit_position": 0,
+                        "bit_size": 16
+                    },
+                    "CellMinResistance": {
+                        "generic_name": "cell_min_resistance",
+                        "bit_position": 16,
+                        "bit_size": 8
+                    },
+                    "CellMaxResistance": {
+                        "generic_name": "cell_max_resistance",
+                        "bit_position": 32,
+                        "bit_size": 8
+                    }
+                }
+            },
             "0x62A": {
-                "name": "BMS Voltage",
+                "name": "BMS Voltages",
                 "signals": {
                     "PackVoltage": {
                         "generic_name": "pack_voltage",
@@ -140,18 +174,96 @@
                         "bit_size": 16,
                         "factor": 0.1,
                         "send_frequency": 15
+                    },
+                    "MinCellVoltage": {
+                        "generic_name": "min_cell_voltage",
+                        "bit_position": 16,
+                        "bit_size": 16,
+                        "factor": 0.0001,
+                        "send_frequency": 15
+                    },
+                    "MaxCellVoltage": {
+                        "generic_name": "max_cell_voltage",
+                        "bit_position": 32,
+                        "bit_size": 16,
+                        "factor": 0.0001,
+                        "send_frequency": 15
+                    },
+                    "AvgCellVoltage": {
+                        "generic_name": "avg_cell_voltage",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.0001,
+                        "send_frequency": 15
                     }
                 }
             },
             "0x62B": {
                 "name": "BMS Current",
                 "signals": {
-                    "CellMaxTemp": {
+                    "Current": {
                         "generic_name": "current",
                         "bit_position": 0,
                         "bit_size": 16,
                         "twos_complement": true,
                         "factor": 0.1
+                    },
+                    "ChargeLimit": {
+                        "generic_name": "charge_limit",
+                        "bit_position": 16,
+                        "bit_size": 16,
+                        "factor": 0.1
+                    },
+                    "DischargeLimit": {
+                        "generic_name": "discharge_limit",
+                        "bit_position": 32,
+                        "bit_size": 16,
+                        "factor": 0.1
+                    },
+                    "TwelveVoltageBatteryVoltage": {
+                        "generic_name": "twelve_volt_battery_voltage",
+                        "bit_position": 48,
+                        "bit_size": 8,
+                        "factor": 0.1
+                    },
+                    "IsReady": {
+                        "generic_name": "is_ready",
+                        "bit_position": 55,
+                        "bit_size": 1
+                        "value_handler": "booleanHandler"
+                    },
+                    "IsCharging": {
+                        "generic_name": "is_charging",
+                        "bit_position": 56,
+                        "bit_size": 1
+                        "value_handler": "booleanHandler"
+                    }
+                }
+            },
+            "0x626": {
+                "name": "BMS SOC",
+                "signals": {
+                    "StateOfCharge": {
+                        "generic_name": "soc",
+                        "bit_position": 0,
+                        "bit_size": 8
+                    },
+                    "DepthOfDischarge": {
+                        "generic_name": "battery_depth_of_discharge",
+                        "bit_position": 8,
+                        "bit_size": 16,
+                        "factor": 0.5
+                    },
+                    "Capacity": {
+                        "generic_name": "battery_capacity",
+                        "bit_position": 24,
+                        "bit_size": 16,
+                        "factor": 0.1
+                    },
+                    "StateOfHealth": {
+                        "generic_name": "battery_state_of_health",
+                        "bit_position": 48,
+                        "bit_size": 8
                     }
                 }
             }
@@ -441,18 +553,6 @@
                         "send_frequency": 15
                     }
                 }
-            }
-        }
-    },
-    "io": {
-        "inputs": {
-            "signals": {
-                "TurnSignalLeft": { "generic_name": "turn_signal_left", "pin": 8, "value_handler": "handleTurnSignals" },
-                "TurnSignalRight": { "generic_name": "turn_signal_status", "pin": 9, "value_handler": "handleTurnSignals" },
-                "ParkingBrakeStatus": { "generic_name": "parking_brake_status", "pin": 10 },
-                "SeatbeltWarning": { "generic_name": "seatbelt_warning", "pin": 11 },
-                "HeadlampStatus": { "generic_name": "headlamp_status", "pin": 12 },
-                "HighbeamStatus": { "generic_name": "high_beam_status", "pin": 13 }
             }
         }
     }
