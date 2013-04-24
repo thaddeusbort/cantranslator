@@ -211,14 +211,12 @@
                     "ChargeLimit": {
                         "generic_name": "charge_limit",
                         "bit_position": 16,
-                        "bit_size": 16,
-                        "factor": 0.1
+                        "bit_size": 16
                     },
                     "DischargeLimit": {
                         "generic_name": "discharge_limit",
                         "bit_position": 32,
-                        "bit_size": 16,
-                        "factor": 0.1
+                        "bit_size": 16
                     },
                     "TwelveVoltageBatteryVoltage": {
                         "generic_name": "twelve_volt_battery_voltage",
