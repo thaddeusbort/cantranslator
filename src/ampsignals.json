@@ -18,6 +18,18 @@
                 "name": "VIN",
                 "handler": "handleVINMessage"
             },
+            "0x713": {
+                "name": "BmsPack1Broadcast",
+                "handler": "handleCellBroadcast"
+            },
+            "0x714": {
+                "name": "BmsPack2Broadcast",
+                "handler": "handleCellBroadcast"
+            },
+            "0x715": {
+                "name": "BmsPack2Broadcast",
+                "handler": "handleCellBroadcast"
+            },
             "0x6D0": {
                 "name": "Odometer",
                 "signals": {
@@ -26,7 +38,7 @@
                         "bit_position": 0,
                         "bit_size": 32,
                         "factor": 0.125,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     }
                 }
             },
@@ -36,35 +48,33 @@
                     "VehicleSpeed": {
                         "generic_name": "vehicle_speed",
                         "bit_position": 0,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 2
                     },
                     "AcceleratorPedal": {
                         "generic_name": "accelerator_pedal",
                         "bit_position": 8,
                         "bit_size": 8,
-                        "ignore": true
+                        "send_frequency": 2
                     },
                     "Brake": {
                         "generic_name": "brake_pedal_status",
                         "bit_position": 16,
                         "bit_size": 8,
                         "value_handler": "booleanHandler",
-                        "send_same": false,
-                        "ignore": true
+                        "send_frequency": 2
                     },
                     "GearNumber": {
                         "generic_name": "transmission_gear_position",
                         "bit_position": 36,
                         "bit_size": 4,
                         "offset": -1,
-                        "send_same": false,
-                        "ignore": true
+                        "send_frequency": 2
                     },
                     "PRNDPosition": {
                         "generic_name": "prnd_position",
                         "bit_position": 34,
                         "bit_size": 2,
-                        "send_same": true,
                         "send_frequency": 10,
                         "states": {
                             "PARK": [
@@ -85,37 +95,35 @@
                         "generic_name": "key_position",
                         "bit_position": 28,
                         "bit_size": 3,
-                        "send_same": false,
-                        "ignore": true
+                        "send_frequency": 2
                     },
                     "KeyCranked": {
                         "generic_name": "key_cranked",
                         "bit_position": 31,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
-                        "send_same": false,
-                        "ignore": true
+                        "send_frequency": 2
                     },
                     "TransmissionTemp": {
                         "generic_name": "transmission_temp",
                         "bit_position": 40,
                         "bit_size": 8,
                         "offset": -40,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     },
                     "AmbientTemp": {
                         "generic_name": "ambient_temp",
                         "bit_position": 48,
                         "bit_size": 8,
                         "offset": -40,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     },
                     "CoolantTemp": {
                         "generic_name": "coolant_temp",
                         "bit_position": 56,
                         "bit_size": 8,
                         "offset": -40,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     }
                 }
             },
@@ -127,21 +135,21 @@
                         "bit_position": 0,
                         "bit_size": 8,
                         "twos_complement": true,
-                        "send_frequency": 15
+                        "send_frequency": 20
                     },
                     "CellMinTemp": {
                         "generic_name": "cell_min_temp",
                         "bit_position": 16,
                         "bit_size": 8,
                         "twos_complement": true,
-                        "send_frequency": 15
+                        "send_frequency": 20
                     },
                     "CellMaxTemp": {
                         "generic_name": "cell_max_temp",
                         "bit_position": 32,
                         "bit_size": 8,
                         "twos_complement": true,
-                        "send_frequency": 15
+                        "send_frequency": 20
                     }
                 }
             },
@@ -151,17 +159,20 @@
                     "PackResistance": {
                         "generic_name": "pack_resistance",
                         "bit_position": 0,
-                        "bit_size": 16
+                        "bit_size": 16,
+                        "send_frequency": 20
                     },
                     "CellMinResistance": {
                         "generic_name": "cell_min_resistance",
                         "bit_position": 16,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 20
                     },
                     "CellMaxResistance": {
                         "generic_name": "cell_max_resistance",
                         "bit_position": 32,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 20
                     }
                 }
             },
@@ -173,28 +184,28 @@
                         "bit_position": 0,
                         "bit_size": 16,
                         "factor": 0.1,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     },
                     "MinCellVoltage": {
                         "generic_name": "min_cell_voltage",
                         "bit_position": 16,
                         "bit_size": 16,
                         "factor": 0.0001,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     },
                     "MaxCellVoltage": {
                         "generic_name": "max_cell_voltage",
                         "bit_position": 32,
                         "bit_size": 16,
                         "factor": 0.0001,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     },
                     "AvgCellVoltage": {
                         "generic_name": "avg_cell_voltage",
                         "bit_position": 48,
                         "bit_size": 16,
                         "factor": 0.0001,
-                        "send_frequency": 15
+                        "send_frequency": 10
                     }
                 }
             },
@@ -206,35 +217,41 @@
                         "bit_position": 0,
                         "bit_size": 16,
                         "twos_complement": true,
-                        "factor": 0.1
+                        "factor": 0.1,
+                        "send_frequency": 5
                     },
                     "ChargeLimit": {
                         "generic_name": "charge_limit",
                         "bit_position": 16,
-                        "bit_size": 16
+                        "bit_size": 16,
+                        "send_frequency": 10
                     },
                     "DischargeLimit": {
                         "generic_name": "discharge_limit",
                         "bit_position": 32,
-                        "bit_size": 16
+                        "bit_size": 16,
+                        "send_frequency": 10
                     },
                     "TwelveVoltageBatteryVoltage": {
                         "generic_name": "twelve_volt_battery_voltage",
                         "bit_position": 48,
                         "bit_size": 8,
-                        "factor": 0.1
+                        "factor": 0.1,
+                        "send_frequency": 20
                     },
                     "IsReady": {
                         "generic_name": "is_ready",
                         "bit_position": 55,
-                        "bit_size": 1
-                        "value_handler": "booleanHandler"
+                        "bit_size": 1,
+                        "value_handler": "booleanHandler",
+                        "send_frequency": 20
                     },
                     "IsCharging": {
                         "generic_name": "is_charging",
                         "bit_position": 56,
-                        "bit_size": 1
-                        "value_handler": "booleanHandler"
+                        "bit_size": 1,
+                        "value_handler": "booleanHandler",
+                        "send_frequency": 20
                     }
                 }
             },
@@ -244,24 +261,178 @@
                     "StateOfCharge": {
                         "generic_name": "soc",
                         "bit_position": 0,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 20
                     },
                     "DepthOfDischarge": {
                         "generic_name": "battery_depth_of_discharge",
                         "bit_position": 8,
                         "bit_size": 16,
-                        "factor": 0.5
+                        "factor": 0.5,
+                        "send_frequency": 20
                     },
                     "Capacity": {
                         "generic_name": "battery_capacity",
                         "bit_position": 24,
                         "bit_size": 16,
-                        "factor": 0.1
+                        "factor": 0.1,
+                        "send_frequency": 20
                     },
                     "StateOfHealth": {
                         "generic_name": "battery_state_of_health",
                         "bit_position": 48,
-                        "bit_size": 8
+                        "bit_size": 8,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x7D1": {
+                "name": "BMS Faults Pack 1",
+                "signals": {
+                    "HasFaultPack1": {
+                        "generic_name": "bms_pack1_has_fault",
+                        "bit_position": 16,
+                        "bit_size": 1,
+                        "send_frequency": 20
+                    },
+                    "UnitTempPack1": {
+                        "generic_name": "bms_pack1_unit_temp",
+                        "bit_position": 24,
+                        "bit_size": 8,
+                        "offset": -40,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x7D2": {
+                "name": "BMS Faults Pack 2",
+                "signals": {
+                    "HasFaultPack2": {
+                        "generic_name": "bms_pack2_has_fault",
+                        "bit_position": 16,
+                        "bit_size": 1,
+                        "send_frequency": 20
+                    },
+                    "UnitTempPack2": {
+                        "generic_name": "bms_pack2_unit_temp",
+                        "bit_position": 24,
+                        "bit_size": 8,
+                        "offset": -40,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x7D3": {
+                "name": "BMS Faults Pack 3",
+                "signals": {
+                    "HasFaultPack3": {
+                        "generic_name": "bms_pack3_has_fault",
+                        "bit_position": 16,
+                        "bit_size": 1,
+                        "send_frequency": 20
+                    },
+                    "UnitTempPack3": {
+                        "generic_name": "bms_pack3_unit_temp",
+                        "bit_position": 24,
+                        "bit_size": 8,
+                        "offset": -40,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x610": {
+                "is_xtd": true,
+                "name": "Charger Status",
+                "signals": {
+                    "ChargerStatus": {
+                        "generic_name": "charger_status",
+                        "bit_position": 0,
+                        "bit_size": 24,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x611": {
+                "is_xtd": true,
+                "name": "Charger Voltages",
+                "signals": {
+                    "ChargerACVoltage": {
+                        "generic_name": "charger_ac_voltage",
+                        "bit_position": 16,
+                        "bit_size": 16,
+                        "factor": 0.1,
+                        "send_frequency": 20
+                    },
+                    "ChargerDCVoltage": {
+                        "generic_name": "charger_dc_voltage",
+                        "bit_position": 32,
+                        "bit_size": 16,
+                        "factor": 0.1,
+                        "send_frequency": 20
+                    },
+                    "ChargerDCCurrent": {
+                        "generic_name": "charger_dc_current",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.1,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x613": {
+                "is_xtd": true,
+                "name": "Charger Temps",
+                "signals": {
+                    "ChargerLogLVTemp": {
+                        "generic_name": "charger_temp_log_lv",
+                        "bit_position": 0,
+                        "bit_size": 16,
+                        "factor": 0.005188,
+                        "offset": -40,
+                        "send_frequency": 20
+                    },
+                    "ChargerLogTemp": {
+                        "generic_name": "charger_temp_log",
+                        "bit_position": 16,
+                        "bit_size": 16,
+                        "factor": 0.005188,
+                        "offset": -40,
+                        "send_frequency": 20
+                    },
+                    "ChargerMagTemp": {
+                        "generic_name": "charger_temp_mag",
+                        "bit_position": 32,
+                        "bit_size": 16,
+                        "factor": 0.005188,
+                        "offset": -40,
+                        "send_frequency": 20
+                    },
+                    "ChargerPowerTemp": {
+                        "generic_name": "charger_temp_power",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.005188,
+                        "offset": -40,
+                        "send_frequency": 20
+                    }
+                }
+            },
+            "0x614": {
+                "is_xtd": true,
+                "name": "Charger Faults",
+                "signals": {
+                    "ChargerFaults": {
+                        "generic_name": "charger_faults",
+                        "bit_position": 0,
+                        "bit_size": 40,
+                        "send_frequency": 20
+                    },
+                    "ChargerInputPower": {
+                        "generic_name": "charger_input_power",
+                        "bit_position": 48,
+                        "bit_size": 16,
+                        "factor": 0.1,
+                        "send_frequency": 20
                     }
                 }
             }
@@ -466,71 +637,6 @@
                         "generic_name": "motor_temperature",
                         "little_endian": true,
                         "bit_position": 16,
-                        "bit_size": 16,
-                        "factor": 0.03125,
-                        "offset": -273,
-                        "send_frequency": 15
-                    }
-                }
-            },
-            "0x18FEF141": {
-                "is_xtd": true,
-                "name": "Cruise Control/Vehicle Speed",
-                "signals": {
-                    "CruiseControlActive": {
-                        "generic_name": "cruise_control_active",
-                        "bit_position": 30,
-                        "bit_size": 2,
-                        "states": {
-                            "OFF": [
-                                0
-                            ],
-                            "ON": [
-                                1
-                            ],
-                            "ERROR": [
-                                2
-                            ]
-                        }
-                    },
-                    "CruiseControlEnabled": {
-                        "generic_name": "cruise_control_enabled",
-                        "bit_position": 28,
-                        "bit_size": 2,
-                        "states": {
-                            "DISABLED": [
-                                0
-                            ],
-                            "ENABLED": [
-                                1
-                            ],
-                            "ERROR": [
-                                2
-                            ]
-                        }
-                    }
-                }
-            },
-            "0x18FEFC41": {
-                "is_xtd": true,
-                "name": "Dash Display",
-                "signals": {
-                    "FuelLevel": {
-                        "generic_name": "fuel_level",
-                        "bit_position": 8,
-                        "bit_size": 8,
-                        "factor": 0.4,
-                        "send_frequency": 15
-                    }
-                }
-            },
-            "0x18FF0141": {
-                "is_xtd": true,
-                "name": "Charger Temps",
-                "signals": {
-                    "ChargerMaxTemp": {
-                        "generic_name": "charger_temperature",
-                        "bit_position": 48,
                         "bit_size": 16,
                         "factor": 0.03125,
                         "offset": -273,

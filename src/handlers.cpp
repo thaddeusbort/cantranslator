@@ -59,6 +59,14 @@ void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int sign
     }
 }
 
+void handleCellBroadcast(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener) {
+    // check 
+    byte* byteData = (byte*)&data;
+    int cellId = byteData[0] + 1;
+    float voltage = (byteData[1] << 8 | byteData[2]) * 0.0001;
+    //"bms_pack" + (messageId-0x712) + "_cell" + cellId + "_voltage"
+}
+
 bool requestVIN() {
     // send message with ID 0x7E0, byte1 09, byte2 02
     if(strlen(mVin) != 17) {
