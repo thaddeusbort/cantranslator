@@ -6,7 +6,7 @@
                 "name": "VIN Request",
                 "signals": {
                     "VinRequest": {
-                        "generic_name": "vin_request",
+                        "generic_name": "service_id",
                         "bit_position": 0,
                         "bit_size": 16,
                         "ignore": true,

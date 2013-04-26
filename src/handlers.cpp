@@ -86,7 +86,7 @@ bool requestVIN() {
     if(strlen(mVin) != 17) {
         CanSignal* signals = getSignals();
         int signalCount = getSignalCount();
-        CanSignal* signal = lookupSignal("vin_request", signals, signalCount);
+        CanSignal* signal = lookupSignal("service_id", signals, signalCount);
         if(signal != NULL) {
             return sendCanSignal(signal, cJSON_CreateNumber(0x0902), signals, signalCount);
         }
@@ -94,11 +94,31 @@ bool requestVIN() {
     return false;
 }
 
+bool sendLoggerPresent() {
+    // send message with ID 0x7E0, byte 1 3F, byte 2 00
+    CanSignal* signals = getSignals();
+    int signalCount = getSignalCount();
+    CanSignal* signal = lookupSignal("service_id", signals, signalCount);
+    if(signal != NULL) {
+        return sendCanSignal(signal, cJSON_CreateNumber(0x3f00), signals, signalCount, true);
+    }
+    return false;
+}
+
 void customLoopHandler() {
     static int count = 125000;
+    static unsigned long lastSentLoggerPresent = 0u;
+
     if(++count >= 125000) {
         count = 0;
         requestVIN();
+    }
+    if(count % 1000 == 0) {
+        unsigned long time_ms = systemTimeMs();
+        if((time_ms - lastSentLoggerPresent) > 15000) {
+            lastSentLoggerPresent = time_ms;
+            sendLoggerPresent();
+        }
     }
 }
 
