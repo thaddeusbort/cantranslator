@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+set -e
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+pushd $DIR/..
+
 source $DIR/bootstrap_for_flashing.sh
 
-CYGWIN_PACKAGES="gcc4, patchutils, git, unzip, python, python-argparse, check, curl, libsasl2, ca-certificates"
+CYGWIN_PACKAGES="make, gcc4, patchutils, git, unzip, python, check, curl, libsasl2, ca-certificates"
 
 if [ $OS == "windows" ]; then
     die "Sorry, the bootstrap script for compiling from source doesn't support the Windows console - try Cygwin."
@@ -17,12 +21,15 @@ fi
 if ! command -v make >/dev/null 2>&1; then
     if [ $OS == "cygwin" ]; then
         _cygwin_error "make"
+    elif [ $OS == "mac" ]; then
+            echo "Missing 'make' - install the Xcode CLI tools"
+	    die
     else
         if [ $DISTRO == "arch" ]; then
             sudo pacman -S base-devel
         elif [ $DISTRO == "Ubuntu" ]; then
             sudo apt-get update -qq
-            sudo apt-get install build-essential
+            sudo apt-get install build-essential -y
         fi
     fi
 fi
@@ -63,7 +70,7 @@ if [ -z $CI ] && ! command -v lcov >/dev/null 2>&1; then
             _wait
         elif [ $DISTRO == "Ubuntu" ]; then
             sudo apt-get update -qq
-            sudo apt-get install lcov
+            sudo apt-get install lcov -y
         fi
     fi
 fi
@@ -224,15 +231,7 @@ if [ -z $CI ] && ! command -v openocd >/dev/null 2>&1; then
 
     echo "Installing OpenOCD..."
     if [ $OS == "linux" ]; then
-        if [ $DISTRO == "arch" ]; then
-            sudo pacman -S openocd
-        elif [ $DISTRO == "Ubuntu" ]; then
-            sudo apt-get update -qq
-            sudo apt-get install openocd
-        else
-            echo "Missing OpenOCD - install it using your distro's package manager or build from source"
-            _wait
-        fi
+        _install "openocd"
     elif [ $OS == "mac" ]; then
         _install libftdi
         _install libusb
@@ -266,43 +265,12 @@ fi
 if ! ld -lcheck -o /tmp/checkcheck 2>/dev/null; then
     echo "Installing the check unit testing library..."
 
-    if [ $OS == "cygwin" ]; then
-        _cygwin_error "check"
-    elif [ $OS == "linux" ]; then
-        if ! command -v lsb_release >/dev/null 2>&1; then
-            echo
-            echo "Missing the 'check' library - install it using your distro's package manager or build from source"
-        else
-            if [ $DISTRO == "arch" ]; then
-                sudo pacman -S check
-            elif [ $DISTRO == "Ubuntu" ]; then
-                sudo apt-get update -qq
-                sudo apt-get install check
-            else
-                echo
-                echo "Missing the 'check' library - install it using your distro's package manager or build from source"
-                _wait
-            fi
-        fi
-    elif [ $OS == "mac" ]; then
-        _install check
-    fi
+    _install "check"
 fi
 
 if ! command -v python >/dev/null 2>&1; then
     echo "Installing Python..."
-    if [ $OS == "cygwin" ]; then
-        _cygwin_error "python"
-    elif [ $OS == "linux" ]; then
-        if [ $DISTRO == "arch" ]; then
-            sudo pacman -S python
-        elif [ $DISTRO == "Ubuntu" ]; then
-            sudo apt-get install python
-        else
-            echo "Missing Python - install it using your distro's package manager or build from source"
-            _wait
-        fi
-     fi
+    _install "python"
 fi
 
 if ! python -c "import argparse"; then
@@ -311,5 +279,7 @@ if ! python -c "import argparse"; then
     fi
 fi
 
+popd
+
 echo
-echo "${bldgreen}All mandatory dependencies installed, ready to compile.$txtrst"
+echo "${bldgreen}All developer dependencies installed, ready to compile.$txtrst"

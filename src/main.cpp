@@ -1,10 +1,15 @@
+#include <stdlib.h>
 #include "serialutil.h"
 #include "usbutil.h"
 #include "ethernetutil.h"
 #include "listener.h"
 #include "signals.h"
 #include "log.h"
+#include "lights.h"
 #include "timer.h"
+#include "bluetooth.h"
+#include "power.h"
+#include "platform.h"
 #include <stdlib.h>
 
 #define VERSION_CONTROL_COMMAND 0x80
@@ -18,7 +23,7 @@ extern void reset();
 extern void setup();
 extern void loop();
 
-const char* VERSION = "3.0";
+const char* VERSION = "3.2";
 
 SerialDevice SERIAL_DEVICE;
 EthernetDevice ETHERNET_DEVICE;
@@ -40,16 +45,30 @@ Listener listener = {&USB_DEVICE,
 #endif // __USE_ETHERNET__
 };
 
-int main(void) {
-#ifdef __PIC32__
-    init();
-#endif // __PIC32__
+/* Public: Update the color and status of a board's light that shows the output
+ * interface status. This function is intended to be called each time through
+ * the main program loop.
+ */
+void updateInterfaceLight() {
+    if(bluetoothConnected()) {
+        enable(LIGHT_B, COLORS.blue);
+    } else if(USB_DEVICE.configured) {
+        enable(LIGHT_B, COLORS.green);
+    } else {
+        disable(LIGHT_B);
+    }
+}
 
+int main(void) {
+    initializePlatform();
     initializeLogging();
     initializeTimers();
+    initializePower();
     initializeUsb(listener.usb);
     initializeSerial(listener.serial);
     initializeEthernet(listener.ethernet);
+    initializeLights();
+    initializeBluetooth();
 
     debug("Initializing as %s", getMessageSet());
     setup();
@@ -57,6 +76,8 @@ int main(void) {
     for (;;) {
         loop();
         processListenerQueues(&listener);
+        updateInterfaceLight();
+        updatePower();
     }
 
     return 0;
@@ -66,6 +87,18 @@ int main(void) {
 extern "C" {
 #endif
 
+/* Private: Handle an incoming USB control request.
+ *
+ * There are two accepted control requests:
+ *
+ *  - VERSION_CONTROL_COMMAND - return the version of the firmware as a string,
+ *      including the vehicle it is built to translate.
+ *  - RESET_CONTROL_COMMAND - reset the device.
+ *
+ *  TODO This function is defined in main.cpp because it needs to reference the
+ *  version and message set, which aren't declared in any header files at the
+ *  moment. Ripe for refactoring!
+ */
 bool handleControlRequest(uint8_t request) {
     switch(request) {
     case VERSION_CONTROL_COMMAND:

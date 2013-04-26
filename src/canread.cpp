@@ -35,16 +35,6 @@ void sendJSONMessage(const char* name, cJSON* value, cJSON* event,
     sendJSON(root, listener);
 }
 
-/* Private: Determine if the received signal should be sent out and update
- * signal metadata.
- *
- * signal - The signal to look for in the CAN message data.
- * data - The data of the CAN message.
- * send - Will be flipped to false if the signal should not be sent (e.g. the
- *      signal is on a limited send frequency and the timer is not up yet).
- *
- * Returns the float value of the signal decoded from the data.
- */
 float preTranslate(CanSignal* signal, uint64_t data, bool* send) {
     float value = decodeCanSignal(signal, data);
 
@@ -63,12 +53,6 @@ float preTranslate(CanSignal* signal, uint64_t data, bool* send) {
     return value;
 }
 
-/* Private: Update signal metadata after translating and sending.
- *
- * We keep track of the last value of each CAN signal (in its raw float form),
- * but we can't update the value until after all translation has happened,
- * in case a custom handler needs to use the value.
- */
 void postTranslate(CanSignal* signal, float value) {
     signal->lastValue = value;
 }
@@ -124,6 +108,12 @@ void sendStringMessage(const char* name, const char* value,
     sendJSONMessage(name, cJSON_CreateString(value), NULL, listener);
 }
 
+void sendEventedFloatMessage(const char* name, const char* value, float event,
+        Listener* listener) {
+    sendJSONMessage(name, cJSON_CreateString(value), cJSON_CreateNumber(event),
+            listener);
+}
+
 void sendEventedBooleanMessage(const char* name, const char* value, bool event,
         Listener* listener) {
     sendJSONMessage(name, cJSON_CreateString(value), cJSON_CreateBool(event),
@@ -167,12 +157,9 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
         CanSignal* signals, int signalCount) {
     bool send = true;
     float value = preTranslate(signal, data, &send);
+    float processedValue = handler(signal, signals, signalCount, value, &send);
     if(send) {
-        float processedValue = handler(signal, signals, signalCount, value,
-                &send);
-        if(send) {
-            sendNumericalMessage(signal->genericName, processedValue, listener);
-        }
+        sendNumericalMessage(signal->genericName, processedValue, listener);
     }
     postTranslate(signal, value);
 }
@@ -183,15 +170,13 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
         CanSignal* signals, int signalCount) {
     bool send = true;
     float value = preTranslate(signal, data, &send);
-    if(send) {
-        const char* stringValue = handler(signal, signals, signalCount, value,
-                &send);
-        if(stringValue == NULL) {
-            debug("No valid string returned from handler for %s",
-                    signal->genericName);
-        } else if(send) {
-            sendStringMessage(signal->genericName, stringValue, listener);
-        }
+    const char* stringValue = handler(signal, signals, signalCount, value,
+            &send);
+    if(stringValue == NULL) {
+        debug("No valid string returned from handler for %s",
+                signal->genericName);
+    } else if(send) {
+        sendStringMessage(signal->genericName, stringValue, listener);
     }
     postTranslate(signal, value);
 }
@@ -202,11 +187,9 @@ void translateCanSignal(Listener* listener, CanSignal* signal,
         CanSignal* signals, int signalCount) {
     bool send = true;
     float value = preTranslate(signal, data, &send);
+    bool booleanValue = handler(signal, signals, signalCount, value, &send);
     if(send) {
-        bool booleanValue = handler(signal, signals, signalCount, value, &send);
-        if(send) {
-            sendBooleanMessage(signal->genericName, booleanValue, listener);
-        }
+        sendBooleanMessage(signal->genericName, booleanValue, listener);
     }
     postTranslate(signal, value);
 }

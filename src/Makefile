@@ -22,6 +22,10 @@ ifdef ETHERNET
 SYMBOLS += __USE_ETHERNET__
 endif
 
+ifndef BOOTLOADER
+BOOTLOADER = 1
+endif
+
 CC_SYMBOLS = $(addprefix -D,$(SYMBOLS))
 
 CJSON_EXISTS = $(shell test -e libs/cJSON/cJSON.h; echo $$?)
@@ -32,7 +36,7 @@ endif
 # Valid PLATFORM options:
 # 	CHIPKIT
 # 	BLUEBOARD
-# 	FORD
+# 	FORDBOARD
 ifndef PLATFORM
 PLATFORM = CHIPKIT
 endif
@@ -55,10 +59,16 @@ emulator: custom_all
 .DEFAULT_GOAL = custom_all
 
 custom_all_prefix:
-	@echo "Compiling..."
+	@echo "Compiling for $(PLATFORM)..."
 
 custom_all: custom_all_prefix all
-	@echo "$(GREEN)Compiled successfully.$(COLOR_RESET)"
+	@echo -n "$(GREEN)Compiled successfully for $(PLATFORM)"
+	@if [[ $(BOOTLOADER) == 1 ]]; then \
+		echo -n " running under a bootloader"; \
+	else \
+		echo -n " running on bare metal"; \
+	fi
+	@echo ".$(COLOR_RESET)"
 
 clean::
 	rm -rf $(OBJDIR_ROOT)/*

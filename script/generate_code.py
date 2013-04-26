@@ -467,6 +467,7 @@ class Parser(object):
                                     % signal.name))
                 print("            break;")
             print("        }")
+            print("        break;")
         print("    }")
 
         if self._message_count() == 0:

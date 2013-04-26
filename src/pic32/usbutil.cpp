@@ -1,6 +1,8 @@
 #include "usbutil.h"
 #include "buffers.h"
 #include "log.h"
+#include "gpio.h"
+
 #include "handlers.h"
 
 #define USB_VBUS_ANALOG_INPUT A0
@@ -124,7 +126,7 @@ void initializeUsb(UsbDevice* usbDevice) {
     initializeUsbCommon(usbDevice);
     usbDevice->device = USBDevice(usbCallback);
     usbDevice->device.InitializeSystem(false);
-    pinMode(USB_VBUS_ANALOG_INPUT, INPUT);
+    setGpioDirection(0, USB_VBUS_ANALOG_INPUT, GPIO_DIRECTION_INPUT);
     debug("Done.");
 }
 

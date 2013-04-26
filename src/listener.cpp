@@ -1,7 +1,8 @@
-#include "queue.h"
+#include "emqueue.h"
 #include "listener.h"
 #include "log.h"
 #include "buffers.h"
+#include "lights.h"
 
 #define DROPPED_MESSAGE_LOGGING_THRESHOLD 100
 

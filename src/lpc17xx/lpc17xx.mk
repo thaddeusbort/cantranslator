@@ -4,14 +4,24 @@ ifneq ($(GCC_ARM_ON_PATH),0)
 GCC_BIN = ../dependencies/gcc-arm-embedded/bin/
 endif
 
+ifndef JTAG_INTERFACE
+	JTAG_INTERFACE = olimex-arm-usb-ocd
+endif
+
 OBJDIR = build/lpc17xx
+OPENOCD_CONF_BASE = ../conf/openocd
 TARGET = $(BASE_TARGET)-lpc17xx
-CMSIS_PATH = ./libs/CDL/CMSISv2p00_LPC17xx
-DRIVER_PATH = ./libs/CDL/LPC17xxLib
-INCLUDE_PATHS = -I. -I./libs/cJSON -I./libs/nxpUSBlib/Drivers \
-				-I$(DRIVER_PATH)/inc -I./libs/BSP -I$(CMSIS_PATH)/inc
-LINKER_SCRIPT = lpc17xx/LPC17xx.ld
 LIBS_PATH = libs
+CMSIS_PATH = ./$(LIBS_PATH)/CDL/CMSISv2p00_LPC17xx
+DRIVER_PATH = ./$(LIBS_PATH)/CDL/LPC17xxLib
+INCLUDE_PATHS = -I. -I./$(LIBS_PATH)/cJSON -I./$(LIBS_PATH)/emqueue \
+				-I./$(LIBS_PATH)/nxpUSBlib/Drivers \
+				-I$(DRIVER_PATH)/inc -I./$(LIBS_PATH)/BSP -I$(CMSIS_PATH)/inc
+ifeq ($(BOOTLOADER), 1)
+LINKER_SCRIPT = lpc17xx/LPC17xx-bootloader.ld
+else
+LINKER_SCRIPT = lpc17xx/LPC17xx-baremetal.ld
+endif
 
 CC = $(GCC_BIN)arm-none-eabi-gcc
 CPP = $(GCC_BIN)arm-none-eabi-g++
@@ -31,7 +41,7 @@ endif
 
 AS = $(GCC_BIN)arm-none-eabi-as
 LD = $(GCC_BIN)arm-none-eabi-g++
-LD_FLAGS = -mcpu=cortex-m3 -mthumb -Wl,--gc-sections
+LD_FLAGS = -mcpu=cortex-m3 -mthumb -Wl,--gc-sections,-Map=$(OBJDIR)/$(BASE_TARGET).map
 LD_SYS_LIBS = -lstdc++ -lsupc++ -lm -lc -lgcc
 
 OBJCOPY = $(GCC_BIN)arm-none-eabi-objcopy
@@ -49,6 +59,7 @@ LIB_C_SRCS += $(CMSIS_PATH)/src/core_cm3.c
 LIB_C_SRCS += $(CMSIS_PATH)/src/system_LPC17xx.c
 LIB_C_SRCS += $(wildcard $(DRIVER_PATH)/src/*.c)
 LIB_C_SRCS += $(LIBS_PATH)/cJSON/cJSON.o
+LIB_C_SRCS += $(LIBS_PATH)/emqueue/emqueue.o
 LOCAL_CPP_SRCS = $(wildcard *.cpp) $(wildcard lpc17xx/*.cpp)
 LOCAL_OBJ_FILES = $(LOCAL_C_SRCS:.c=.o) $(LOCAL_CPP_SRCS:.cpp=.o) $(LIB_C_SRCS:.c=.o)
 OBJECTS = $(patsubst %,$(OBJDIR)/%,$(LOCAL_OBJ_FILES))
@@ -59,12 +70,12 @@ TARGET_ELF = $(OBJDIR)/$(TARGET).elf
 ifdef DEBUG
 CC_FLAGS += -g -ggdb
 else
-CC_FLAGS += -Os -Wno-maybe-uninitialized
+CC_FLAGS += -Os -Wno-uninitialized
 endif
 
-BSP_EXISTS = $(shell test -e libs/BSP/bsp.h; echo $$?)
-CDL_EXISTS = $(shell test -e libs/CDL/README.mkd; echo $$?)
-USBLIB_EXISTS = $(shell test -e libs/nxpUSBlib/README.mkd; echo $$?)
+BSP_EXISTS = $(shell test -e $(LIBS_PATH)/BSP/bsp.h; echo $$?)
+CDL_EXISTS = $(shell test -e $(LIBS_PATH)/CDL/README.mkd; echo $$?)
+USBLIB_EXISTS = $(shell test -e $(LIBS_PATH)/nxpUSBlib/README.mkd; echo $$?)
 ifneq ($(BSP_EXISTS),0)
 $(error BSP dependency is missing - did you run "git submodule init && git submodule update"?)
 endif
@@ -80,10 +91,12 @@ endif
 all: $(TARGET_BIN)
 
 flash: all
-	@openocd -f ../conf/$(BASE_TARGET).cfg -f ../conf/flash.cfg
+	@echo "Flashing $(PLATFORM) via JTAG with OpenOCD..."
+	@openocd -f $(OPENOCD_CONF_BASE)/$(BASE_TARGET).cfg -f $(OPENOCD_CONF_BASE)/interface/$(JTAG_INTERFACE).cfg -f $(OPENOCD_CONF_BASE)/flash.cfg
+	@echo "$(GREEN)Flashed $(PLATFORM) successfully.$(COLOR_RESET)"
 
 gdb: all
-	@openocd -f ../conf/gdb.cfg
+	@openocd -f $(OPENOCD_CONF_BASE)/gdb.cfg
 
 .s.o:
 	$(AS) $(AS_FLAGS) -o $@ $<
@@ -97,7 +110,7 @@ $(OBJDIR)/%.o: %.cpp
 	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) $(ONLY_CPP_FLAGS) $(INCLUDE_PATHS) -o $@ $<
 
 $(TARGET_ELF): $(OBJECTS)
-	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) -o $@ $^ $(LD_SYS_LIBS)
+	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) -Llpc17xx -o $@ $^ $(LD_SYS_LIBS)
 
 $(TARGET_BIN): $(TARGET_ELF)
 	$(OBJCOPY) -O binary $< $@

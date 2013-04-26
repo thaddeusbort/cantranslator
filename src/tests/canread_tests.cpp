@@ -49,7 +49,7 @@ void setup() {
 START_TEST (test_decode_signal)
 {
     CanSignal signal = SIGNALS[0];
-    uint64_t data = 0xEB;
+    uint64_t data = 0xEB00000000000000;
     float result = decodeCanSignal(&signal, data);
     float correctResult = 0xA * 1001.0 - 30000.0;
     fail_unless(result == correctResult,
@@ -175,6 +175,19 @@ START_TEST (test_send_evented_string)
 }
 END_TEST
 
+START_TEST (test_send_evented_float)
+{
+    fail_unless(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
+    sendEventedFloatMessage("test", "value", 43.0, &listener);
+    fail_if(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
+
+    uint8_t snapshot[QUEUE_LENGTH(uint8_t, &listener.usb->sendQueue) + 1];
+    QUEUE_SNAPSHOT(uint8_t, &listener.usb->sendQueue, snapshot);
+    snapshot[sizeof(snapshot) - 1] = NULL;
+    ck_assert_str_eq((char*)snapshot, "{\"name\":\"test\",\"value\":\"value\",\"event\":43}\r\n");
+}
+END_TEST
+
 START_TEST (test_passthrough_message)
 {
     fail_unless(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
@@ -195,7 +208,8 @@ float floatHandler(CanSignal* signal, CanSignal* signals, int signalCount,
 
 START_TEST (test_default_handler)
 {
-    translateCanSignal(&listener, &SIGNALS[0], 0xEB, SIGNALS, SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB00000000000000, SIGNALS,
+            SIGNAL_COUNT);
     fail_if(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
 
     uint8_t snapshot[QUEUE_LENGTH(uint8_t, &listener.usb->sendQueue) + 1];
@@ -243,6 +257,61 @@ START_TEST (test_translate_float)
     QUEUE_SNAPSHOT(uint8_t, &listener.usb->sendQueue, snapshot);
     snapshot[sizeof(snapshot) - 1] = NULL;
     ck_assert_str_eq((char*)snapshot, "{\"name\":\"torque_at_transmission\",\"value\":42}\r\n");
+}
+END_TEST
+
+int frequencyTestCounter = 0;
+float floatHandlerFrequencyTest(CanSignal* signal, CanSignal* signals, int signalCount,
+        float value, bool* send) {
+    frequencyTestCounter++;
+    return 42;
+}
+
+START_TEST (test_translate_float_handler_called_every_time)
+{
+    SIGNALS[0].sendFrequency = 2;
+    frequencyTestCounter = 0;
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, floatHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, floatHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    ck_assert_int_eq(frequencyTestCounter, 2);
+}
+END_TEST
+
+bool boolHandlerFrequencyTest(CanSignal* signal, CanSignal* signals, int signalCount,
+        float value, bool* send) {
+    frequencyTestCounter++;
+    return true;
+}
+
+START_TEST (test_translate_bool_handler_called_every_time)
+{
+    SIGNALS[0].sendFrequency = 2;
+    frequencyTestCounter = 0;
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, boolHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, boolHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    ck_assert_int_eq(frequencyTestCounter, 2);
+}
+END_TEST
+
+const char* strHandlerFrequencyTest(CanSignal* signal, CanSignal* signals,
+        int signalCount, float value, bool* send) {
+    frequencyTestCounter++;
+    return "Dude.";
+}
+
+START_TEST (test_translate_str_handler_called_every_time)
+{
+    SIGNALS[0].sendFrequency = 2;
+    frequencyTestCounter = 0;
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, strHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB, strHandlerFrequencyTest, SIGNALS,
+            SIGNAL_COUNT);
+    ck_assert_int_eq(frequencyTestCounter, 2);
 }
 END_TEST
 
@@ -313,11 +382,11 @@ float preserveHandler(CanSignal* signal, CanSignal* signals, int signalCount,
 
 START_TEST (test_preserve_last_value)
 {
-    translateCanSignal(&listener, &SIGNALS[0], 0xEB, SIGNALS, SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[0], 0xEB00000000000000, SIGNALS, SIGNAL_COUNT);
     fail_if(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
     QUEUE_INIT(uint8_t, &listener.usb->sendQueue);
 
-    translateCanSignal(&listener, &SIGNALS[0], 0x1234123, preserveHandler, SIGNALS,
+    translateCanSignal(&listener, &SIGNALS[0], 0x1234123000000000, preserveHandler, SIGNALS,
             SIGNAL_COUNT);
     fail_if(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
 
@@ -331,8 +400,8 @@ END_TEST
 START_TEST (test_dont_send_same)
 {
     SIGNALS[2].sendSame = false;
-    translateCanSignal(&listener, &SIGNALS[2], 0xEB, booleanHandler, SIGNALS,
-            SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[2], 0xEB00000000000000,
+            booleanHandler, SIGNALS, SIGNAL_COUNT);
     fail_if(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
 
     uint8_t snapshot[QUEUE_LENGTH(uint8_t, &listener.usb->sendQueue) + 1];
@@ -341,8 +410,8 @@ START_TEST (test_dont_send_same)
     ck_assert_str_eq((char*)snapshot, "{\"name\":\"brake_pedal_status\",\"value\":true}\r\n");
 
     QUEUE_INIT(uint8_t, &listener.usb->sendQueue);
-    translateCanSignal(&listener, &SIGNALS[2], 0xEB, booleanHandler, SIGNALS,
-            SIGNAL_COUNT);
+    translateCanSignal(&listener, &SIGNALS[2], 0xEB00000000000000,
+            booleanHandler, SIGNALS, SIGNAL_COUNT);
     fail_unless(QUEUE_EMPTY(uint8_t, &listener.usb->sendQueue));
 }
 END_TEST
@@ -366,6 +435,7 @@ Suite* canreadSuite(void) {
     tcase_add_test(tc_sending, test_send_string);
     tcase_add_test(tc_sending, test_send_evented_boolean);
     tcase_add_test(tc_sending, test_send_evented_string);
+    tcase_add_test(tc_sending, test_send_evented_float);
     tcase_add_test(tc_sending, test_passthrough_message);
     suite_add_tcase(s, tc_sending);
 
@@ -380,6 +450,9 @@ Suite* canreadSuite(void) {
     tcase_add_test(tc_translate, test_default_handler);
     tcase_add_test(tc_translate, test_dont_send_same);
     tcase_add_test(tc_translate, test_translate_respects_send_value);
+    tcase_add_test(tc_translate, test_translate_float_handler_called_every_time);
+    tcase_add_test(tc_translate, test_translate_bool_handler_called_every_time);
+    tcase_add_test(tc_translate, test_translate_str_handler_called_every_time);
     suite_add_tcase(s, tc_translate);
 
     return s;
