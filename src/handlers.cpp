@@ -60,18 +60,25 @@ void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int sign
 }
 
 void handleCellBroadcast(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener) {
-    // check 
+    static uint8_t cellMsgCount[3][63] = {{0}};
+    #define SEND_AFTER_X_MSGS 20
+    // check
     byte* byteData = (byte*)&data;
-    int cellId = byteData[0] + 1;
-    float voltage = (byteData[1] << 8 | byteData[2]) * 0.0001;
+    uint8_t cellId = byteData[0] + 1;
+    uint8_t packId = (messageId-0x712);
+    if(cellMsgCount[packId-1][cellId-1] == 0 || ++cellMsgCount[packId-1][cellId-1] >= SEND_AFTER_X_MSGS) {
+        cellMsgCount[packId-1][cellId-1] = 1;
+        float voltage = (byteData[1] << 8 | byteData[2]) * 0.0001f;
     
-    char cellName[25];
-    strcpy(cellName, "bms_pack")
-    strcat(cellName, (messageId-0x712));
-    strcat(cellName, "_cell");
-    strcat(cellName, cellId);
-    strcat(cellName, "_voltage");
-    sendStringMessage(cellName, voltage, listener);
+        char cellName[25];
+        strcpy(cellName, "bms_pack");
+        itoa(packId, cellName+strlen(cellName), 10);
+        strcat(cellName, "_cell");
+        if(cellId < 10) strcat(cellName, "0"); // place holder digit
+        itoa(cellId, cellName+strlen(cellName), 10);
+        strcat(cellName, "_voltage");
+        sendNumericalMessage(cellName, voltage, listener);
+    }
 }
 
 bool requestVIN() {
