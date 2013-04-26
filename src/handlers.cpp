@@ -38,7 +38,7 @@ void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int sign
     // check if Byte1 is 0x49 and Byte2 is 0-2
     // decode the value and concatenate it until we have the whole VIN
     char* byteData = (char*)&data;
-    if(byteData[0] == 0x48) {
+    if(byteData[0] == 0x49) {
         char oldVin[18];
         strcpy(oldVin, mVin);
         switch(byteData[1]) {

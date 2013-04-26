@@ -13,7 +13,7 @@ KERNEL=`uname`
 HEX_FILE="$1"
 PORT=$2
 
-source $DIR/bootstrap_for_flashing.sh
+source $DIR/script/bootstrap_for_flashing.sh
 
 if [ -z $PORT ]; then
     if [ $OS == "windows" ] || [ $OS == "cygwin" ]; then
@@ -59,7 +59,7 @@ else
 fi
 
 if [ -z $AVRDUDE_CONF ]; then
-    if [ $OS == "cygwin" ]; then
+    if [ $OS == "cygwin" ] || [ $OS == "Windows_NT" ]; then
         # avrdude in cygwin expects windows style paths, so the absolute
         # path throws a "file not found" error
         AVRDUDE_CONF="conf/avrdude.conf"
