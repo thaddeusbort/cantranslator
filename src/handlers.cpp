@@ -64,7 +64,14 @@ void handleCellBroadcast(int messageId, uint64_t data, CanSignal* signals, int s
     byte* byteData = (byte*)&data;
     int cellId = byteData[0] + 1;
     float voltage = (byteData[1] << 8 | byteData[2]) * 0.0001;
-    //"bms_pack" + (messageId-0x712) + "_cell" + cellId + "_voltage"
+    
+    char cellName[25];
+    strcpy(cellName, "bms_pack")
+    strcat(cellName, (messageId-0x712));
+    strcat(cellName, "_cell");
+    strcat(cellName, cellId);
+    strcat(cellName, "_voltage");
+    sendStringMessage(cellName, voltage, listener);
 }
 
 bool requestVIN() {
