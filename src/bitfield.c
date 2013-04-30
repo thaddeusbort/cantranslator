@@ -1,4 +1,5 @@
 #include "bitfield.h"
+#include "log.h"
 #include <stdbool.h>
 
 bool bigEndian() {
@@ -21,7 +22,7 @@ int findEndBit(int startBit, int numBits) {
 }
 
 uint64_t bitmask(int numBits) {
-    return (0x1 << numBits) - 1;
+    return ((uint64_t)0x1u << numBits) - 1;
 }
 
 void reverseBytes(uint64_t* data, int numBytes) {
@@ -63,8 +64,8 @@ uint64_t getBitField(uint64_t data, int startBit, int numBits, uint8_t isLittleE
 
     ret >>= 8 - findEndBit(startBit, numBits);
     ret = ret & bitmask(numBits);
-    //if(0 == numBits % 8 && isLittleEndian)
-    //    reverseBytes(&ret, numBits / 8);
+    if(0 == numBits % 8 && isLittleEndian)
+        reverseBytes(&ret, numBits / 8);
     return ret;
 }
 

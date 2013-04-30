@@ -1,7 +1,6 @@
 #include "canread.h"
 #include "log.h"
 #include <stdlib.h>
-#include "log.h"
 
 /* Private: Serialize the root JSON object to a string (ending with a newline)
  * and send it to the listener.
