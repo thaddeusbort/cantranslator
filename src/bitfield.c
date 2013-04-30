@@ -63,8 +63,8 @@ uint64_t getBitField(uint64_t data, int startBit, int numBits, uint8_t isLittleE
 
     ret >>= 8 - findEndBit(startBit, numBits);
     ret = ret & bitmask(numBits);
-    if(0 == numBits % 8 && !isLittleEndian)
-        reverseBytes(&ret, numBits / 8);
+    //if(0 == numBits % 8 && isLittleEndian)
+    //    reverseBytes(&ret, numBits / 8);
     return ret;
 }
 
