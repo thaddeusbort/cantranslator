@@ -24,6 +24,7 @@ float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* lis
     else
         status = "RIGHT";
 
+    debug("%s=%s\r\n", RIGHT_NAME, status);
     sendStringMessage(RIGHT_NAME, status, listener);
     return value;   // need to return the value so that it gets saved as the lastValue for the signal
 }
