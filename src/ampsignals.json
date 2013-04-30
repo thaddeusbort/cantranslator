@@ -34,7 +34,7 @@
                 "name": "Odometer",
                 "signals": {
                     "OdometerKm": {
-                        "generic_name": "odometer",
+                        "generic_name": "vehicle_odometer",
                         "bit_position": 0,
                         "bit_size": 32,
                         "factor": 0.125,
@@ -52,27 +52,27 @@
                         "send_frequency": 2
                     },
                     "AcceleratorPedal": {
-                        "generic_name": "accelerator_pedal",
+                        "generic_name": "vehicle_accelerator_pedal",
                         "bit_position": 8,
                         "bit_size": 8,
                         "send_frequency": 2
                     },
                     "Brake": {
-                        "generic_name": "brake_pedal_status",
+                        "generic_name": "vehicle_brake_pedal_status",
                         "bit_position": 16,
                         "bit_size": 8,
                         "value_handler": "booleanHandler",
                         "send_frequency": 2
                     },
                     "GearNumber": {
-                        "generic_name": "transmission_gear_position",
+                        "generic_name": "vehicle_transmission_gear_position",
                         "bit_position": 36,
                         "bit_size": 4,
                         "offset": -1,
                         "send_frequency": 2
                     },
                     "PRNDPosition": {
-                        "generic_name": "prnd_position",
+                        "generic_name": "vehicle_prnd_position",
                         "bit_position": 34,
                         "bit_size": 2,
                         "send_frequency": 10,
@@ -92,34 +92,34 @@
                         }
                     },
                     "KeyPosition": {
-                        "generic_name": "key_position",
+                        "generic_name": "vehicle_key_position",
                         "bit_position": 28,
                         "bit_size": 3,
                         "send_frequency": 2
                     },
                     "KeyCranked": {
-                        "generic_name": "key_cranked",
+                        "generic_name": "vehicle_key_cranked",
                         "bit_position": 31,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
                         "send_frequency": 2
                     },
                     "TransmissionTemp": {
-                        "generic_name": "transmission_temp",
+                        "generic_name": "vehicle_transmission_temp",
                         "bit_position": 40,
                         "bit_size": 8,
                         "offset": -40,
                         "send_frequency": 10
                     },
                     "AmbientTemp": {
-                        "generic_name": "ambient_temp",
+                        "generic_name": "vehicle_ambient_temp",
                         "bit_position": 48,
                         "bit_size": 8,
                         "offset": -40,
                         "send_frequency": 10
                     },
                     "CoolantTemp": {
-                        "generic_name": "coolant_temp",
+                        "generic_name": "vehicle_coolant_temp",
                         "bit_position": 56,
                         "bit_size": 8,
                         "offset": -40,
@@ -131,21 +131,21 @@
                 "name": "BMS Temps",
                 "signals": {
                     "AvgPackTemp": {
-                        "generic_name": "avg_pack_temp",
+                        "generic_name": "bms_avg_pack_temp",
                         "bit_position": 0,
                         "bit_size": 8,
                         "twos_complement": true,
                         "send_frequency": 20
                     },
                     "CellMinTemp": {
-                        "generic_name": "cell_min_temp",
+                        "generic_name": "bms_cell_min_temp",
                         "bit_position": 16,
                         "bit_size": 8,
                         "twos_complement": true,
                         "send_frequency": 20
                     },
                     "CellMaxTemp": {
-                        "generic_name": "cell_max_temp",
+                        "generic_name": "bms_cell_max_temp",
                         "bit_position": 32,
                         "bit_size": 8,
                         "twos_complement": true,
@@ -157,19 +157,19 @@
                 "name": "BMS Resistance",
                 "signals": {
                     "PackResistance": {
-                        "generic_name": "pack_resistance",
+                        "generic_name": "bms_pack_resistance",
                         "bit_position": 0,
                         "bit_size": 16,
                         "send_frequency": 20
                     },
                     "CellMinResistance": {
-                        "generic_name": "cell_min_resistance",
+                        "generic_name": "bms_cell_min_resistance",
                         "bit_position": 16,
                         "bit_size": 8,
                         "send_frequency": 20
                     },
                     "CellMaxResistance": {
-                        "generic_name": "cell_max_resistance",
+                        "generic_name": "bms_cell_max_resistance",
                         "bit_position": 32,
                         "bit_size": 8,
                         "send_frequency": 20
@@ -180,28 +180,28 @@
                 "name": "BMS Voltages",
                 "signals": {
                     "PackVoltage": {
-                        "generic_name": "pack_voltage",
+                        "generic_name": "bms_pack_voltage",
                         "bit_position": 0,
                         "bit_size": 16,
                         "factor": 0.1,
                         "send_frequency": 10
                     },
                     "MinCellVoltage": {
-                        "generic_name": "min_cell_voltage",
+                        "generic_name": "bms_cell_min_voltage",
                         "bit_position": 16,
                         "bit_size": 16,
                         "factor": 0.0001,
                         "send_frequency": 10
                     },
                     "MaxCellVoltage": {
-                        "generic_name": "max_cell_voltage",
+                        "generic_name": "bms_cell_max_voltage",
                         "bit_position": 32,
                         "bit_size": 16,
                         "factor": 0.0001,
                         "send_frequency": 10
                     },
                     "AvgCellVoltage": {
-                        "generic_name": "avg_cell_voltage",
+                        "generic_name": "bms_cell_avg_voltage",
                         "bit_position": 48,
                         "bit_size": 16,
                         "factor": 0.0001,
@@ -213,7 +213,7 @@
                 "name": "BMS Current",
                 "signals": {
                     "Current": {
-                        "generic_name": "current",
+                        "generic_name": "bms_current",
                         "bit_position": 0,
                         "bit_size": 16,
                         "twos_complement": true,
@@ -221,33 +221,33 @@
                         "send_frequency": 5
                     },
                     "ChargeLimit": {
-                        "generic_name": "charge_limit",
+                        "generic_name": "bms_charge_limit",
                         "bit_position": 16,
                         "bit_size": 16,
                         "send_frequency": 10
                     },
                     "DischargeLimit": {
-                        "generic_name": "discharge_limit",
+                        "generic_name": "bms_discharge_limit",
                         "bit_position": 32,
                         "bit_size": 16,
                         "send_frequency": 10
                     },
                     "TwelveVoltageBatteryVoltage": {
-                        "generic_name": "twelve_volt_battery_voltage",
+                        "generic_name": "vehicle_twelve_volt_battery_voltage",
                         "bit_position": 48,
                         "bit_size": 8,
                         "factor": 0.1,
                         "send_frequency": 20
                     },
                     "IsReady": {
-                        "generic_name": "is_ready",
+                        "generic_name": "bms_is_ready",
                         "bit_position": 55,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
                         "send_frequency": 20
                     },
                     "IsCharging": {
-                        "generic_name": "is_charging",
+                        "generic_name": "bms_is_charging",
                         "bit_position": 56,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
@@ -259,27 +259,27 @@
                 "name": "BMS SOC",
                 "signals": {
                     "StateOfCharge": {
-                        "generic_name": "soc",
+                        "generic_name": "bms_soc",
                         "bit_position": 0,
                         "bit_size": 8,
                         "send_frequency": 20
                     },
                     "DepthOfDischarge": {
-                        "generic_name": "battery_depth_of_discharge",
+                        "generic_name": "bms_battery_depth_of_discharge",
                         "bit_position": 8,
                         "bit_size": 16,
                         "factor": 0.5,
                         "send_frequency": 20
                     },
                     "Capacity": {
-                        "generic_name": "battery_capacity",
+                        "generic_name": "bms_battery_capacity",
                         "bit_position": 24,
                         "bit_size": 16,
                         "factor": 0.1,
                         "send_frequency": 20
                     },
                     "StateOfHealth": {
-                        "generic_name": "battery_state_of_health",
+                        "generic_name": "bms_battery_state_of_health",
                         "bit_position": 48,
                         "bit_size": 8,
                         "send_frequency": 20
@@ -441,67 +441,67 @@
                 "name": "Amp Vehicle Status",
                 "signals": {
                     "StandbyMode": {
-                        "generic_name": "standby_mode",
+                        "generic_name": "status_standby_mode",
                         "bit_position": 7,
                         "bit_size": 1
                     },
                     "DriveMode": {
-                        "generic_name": "drive_mode",
+                        "generic_name": "status_drive_mode",
                         "bit_position": 6,
                         "bit_size": 1
                     },
                     "ChargeMode": {
-                        "generic_name": "charge_mode",
+                        "generic_name": "status_charge_mode",
                         "bit_position": 5,
                         "bit_size": 1
                     },
                     "ChargeBalancing": {
-                        "generic_name": "charge_balancing",
+                        "generic_name": "status_charge_balancing",
                         "bit_position": 4,
                         "bit_size": 1
                     },
                     "ChargeComplete": {
-                        "generic_name": "charge_complete",
+                        "generic_name": "status_charge_complete",
                         "bit_position": 3,
                         "bit_size": 1
                     },
                     "PreCharging": {
-                        "generic_name": "precharging",
+                        "generic_name": "status_precharging",
                         "bit_position": 2,
                         "bit_size": 1
                     },
                     "PreChargeComplete": {
-                        "generic_name": "precharge_complete",
+                        "generic_name": "status_precharge_complete",
                         "bit_position": 1,
                         "bit_size": 1
                     },
                     "KeyCranked": {
-                        "generic_name": "key_cranked",
+                        "generic_name": "status_key_cranked",
                         "bit_position": 0,
                         "bit_size": 1
                     },
                     "TorqueConverterLocked": {
-                        "generic_name": "torque_converter_locked",
+                        "generic_name": "status_torque_converter_locked",
                         "bit_position": 15,
                         "bit_size": 1
                     },
                     "RegenDisabled": {
-                        "generic_name": "regen_disabled",
+                        "generic_name": "status_regen_disabled",
                         "bit_position": 14,
                         "bit_size": 1
                     },
                     "PowerLimitedDueToBattery": {
-                        "generic_name": "power_limited_due_to_battery",
+                        "generic_name": "status_power_limited_due_to_battery",
                         "bit_position": 13,
                         "bit_size": 1
                     },
                     "PowerLimitedDueToMotorTemp": {
-                        "generic_name": "power_limited_due_to_motor_temp",
+                        "generic_name": "status_power_limited_due_to_motor_temp",
                         "bit_position": 12,
                         "bit_size": 1
                     },
                     "PowerLimitedDueToCalibration": {
-                        "generic_name": "power_limited_due_to_calibration",
+                        "generic_name": "status_power_limited_due_to_calibration",
                         "bit_position": 11,
                         "bit_size": 1
                     }
@@ -512,232 +512,232 @@
                 "name": "Amp Vehicle Faults",
                 "signals": {
                     "ECMCommFail": {
-                        "generic_name": "ecm_comm_fail",
+                        "generic_name": "fault_ecm_comm_fail",
                         "bit_position": 7,
                         "bit_size": 1
                     },
                     "TCMCommFail": {
-                        "generic_name": "tcm_comm_fail",
+                        "generic_name": "fault_tcm_comm_fail",
                         "bit_position": 6,
                         "bit_size": 1
                     },
                     "InverterCommFail": {
-                        "generic_name": "inverter_comm_fail",
+                        "generic_name": "fault_inverter_comm_fail",
                         "bit_position": 5,
                         "bit_size": 1
                     },
                     "BMSCommFail": {
-                        "generic_name": "bms_comm_fail",
+                        "generic_name": "fault_bms_comm_fail",
                         "bit_position": 4,
                         "bit_size": 1
                     },
                     "ChargerCommFail": {
-                        "generic_name": "charger_comm_fail",
+                        "generic_name": "fault_charger_comm_fail",
                         "bit_position": 3,
                         "bit_size": 1
                     },
                     "MotorOverTemp": {
-                        "generic_name": "motor_over_temp",
+                        "generic_name": "fault_motor_over_temp",
                         "bit_position": 1,
                         "bit_size": 1
                     },
                     "InverterOverTemp": {
-                        "generic_name": "inverter_over_temp",
+                        "generic_name": "fault_inverter_over_temp",
                         "bit_position": 0,
                         "bit_size": 1
                     },
                     "BatteryOverTemp": {
-                        "generic_name": "battery_over_temp",
+                        "generic_name": "fault_battery_over_temp",
                         "bit_position": 15,
                         "bit_size": 1
                     },
                     "BatteryUnderTemp": {
-                        "generic_name": "battery_under_temp",
+                        "generic_name": "fault_battery_under_temp",
                         "bit_position": 14,
                         "bit_size": 1
                     },
                     "ChargerOverTemp": {
-                        "generic_name": "charger_over_temp",
+                        "generic_name": "fault_charger_over_temp",
                         "bit_position": 13,
                         "bit_size": 1
                     },
                     "TransmissionOverTemp": {
-                        "generic_name": "transmission_over_temp",
+                        "generic_name": "fault_transmission_over_temp",
                         "bit_position": 12,
                         "bit_size": 1
                     },
                     "CoolantOverTemp": {
-                        "generic_name": "coolant_over_temp",
+                        "generic_name": "fault_coolant_over_temp",
                         "bit_position": 11,
                         "bit_size": 1
                     },
                     "InverterFault": {
-                        "generic_name": "inverter_fault",
+                        "generic_name": "fault_inverter_fault",
                         "bit_position": 9,
                         "bit_size": 1
                     },
                     "BMSFault": {
-                        "generic_name": "bms_fault",
+                        "generic_name": "fault_bms_fault",
                         "bit_position": 8,
                         "bit_size": 1
                     },
                     "ChargerFault": {
-                        "generic_name": "charger_fault",
+                        "generic_name": "fault_charger_fault",
                         "bit_position": 23,
                         "bit_size": 1
                     },
                     "OutOfCalibration": {
-                        "generic_name": "out_of_calibration",
+                        "generic_name": "fault_out_of_calibration",
                         "bit_position": 21,
                         "bit_size": 1
                     },
                     "GroundFault": {
-                        "generic_name": "ground_fault",
+                        "generic_name": "fault_ground_fault",
                         "bit_position": 20,
                         "bit_size": 1
                     },
                     "HVInterlock": {
-                        "generic_name": "hv_interlock",
+                        "generic_name": "fault_hv_interlock",
                         "bit_position": 19,
                         "bit_size": 1
                     },
                     "ContactorWelded": {
-                        "generic_name": "contactor_welded",
+                        "generic_name": "fault_contactor_welded",
                         "bit_position": 18,
                         "bit_size": 1
                     },
                     "BatteryContactorOpened": {
-                        "generic_name": "battery_contactor_opened",
+                        "generic_name": "fault_battery_contactor_opened",
                         "bit_position": 17,
                         "bit_size": 1
                     },
                     "ChargeContactorOpened": {
-                        "generic_name": "charge_contactor_opened",
+                        "generic_name": "fault_charge_contactor_opened",
                         "bit_position": 16,
                         "bit_size": 1
                     },
                     "DriveContactorOpened": {
-                        "generic_name": "drive_contactor_opened",
+                        "generic_name": "fault_drive_contactor_opened",
                         "bit_position": 31,
                         "bit_size": 1
                     },
                     "HumidityDetected": {
-                        "generic_name": "humidity_detected",
+                        "generic_name": "fault_humidity_detected",
                         "bit_position": 30,
                         "bit_size": 1
                     },
                     "EmergencyStopPressed": {
-                        "generic_name": "estop_pressed",
+                        "generic_name": "fault_estop_pressed",
                         "bit_position": 29,
                         "bit_size": 1
                     },
                     "HoodInterlock": {
-                        "generic_name": "hood_interlock",
+                        "generic_name": "fault_hood_interlock",
                         "bit_position": 28,
                         "bit_size": 1
                     },
                     "BmsInternalCommunicationFault": {
-                        "generic_name": "bms_fault_internal_communication",
+                        "generic_name": "fault_bms_internal_communication",
                         "bit_position": 27,
                         "bit_size": 1
                     },
                     "BmsInternalConversionFault": {
-                        "generic_name": "bms_fault_internal_conversion",
+                        "generic_name": "fault_bms_internal_conversion",
                         "bit_position": 26,
                         "bit_size": 1
                     },
                     "BmsWeakCellFault": {
-                        "generic_name": "bms_fault_weak_cell",
+                        "generic_name": "fault_bms_weak_cell",
                         "bit_position": 25,
                         "bit_size": 1
                     },
                     "BmsLowCellVoltageFault": {
-                        "generic_name": "bms_fault_low_cell_voltage",
+                        "generic_name": "fault_bms_low_cell_voltage",
                         "bit_position": 24,
                         "bit_size": 1
                     },
                     "BmsOpenCellVoltageFault": {
-                        "generic_name": "bms_fault_open_cell_voltage",
+                        "generic_name": "fault_bms_open_cell_voltage",
                         "bit_position": 39,
                         "bit_size": 1
                     },
                     "BmsCurrentSensorFault": {
-                        "generic_name": "bms_fault_current_sensor",
+                        "generic_name": "fault_bms_current_sensor",
                         "bit_position": 38,
                         "bit_size": 1
                     },
                     "BmsPackVoltageSensorFault": {
-                        "generic_name": "bms_fault_pack_voltage_sensor",
+                        "generic_name": "fault_bms_pack_voltage_sensor",
                         "bit_position": 37,
                         "bit_size": 1
                     },
                     "BmsWeakPackFault": {
-                        "generic_name": "bms_fault_weak_pack",
+                        "generic_name": "fault_bms_weak_pack",
                         "bit_position": 36,
                         "bit_size": 1
                     },
                     "BmsVoltageRedundancyFault": {
-                        "generic_name": "bms_fault_voltage_redundancy",
+                        "generic_name": "fault_bms_voltage_redundancy",
                         "bit_position": 35,
                         "bit_size": 1
                     },
                     "BmsFanMonitorFault": {
-                        "generic_name": "bms_fault_fan_monitor",
+                        "generic_name": "fault_bms_fan_monitor",
                         "bit_position": 34,
                         "bit_size": 1
                     },
                     "BmsThermistorFault": {
-                        "generic_name": "bms_fault_thermistor",
+                        "generic_name": "fault_bms_thermistor",
                         "bit_position": 33,
                         "bit_size": 1
                     },
                     "BmsCommunicationFault": {
-                        "generic_name": "bms_fault_communication",
+                        "generic_name": "fault_bms_communication",
                         "bit_position": 32,
                         "bit_size": 1
                     },
                     "BmsAlwaysOnSupplyFault": {
-                        "generic_name": "bms_fault_always_on",
+                        "generic_name": "fault_bms_always_on",
                         "bit_position": 47,
                         "bit_size": 1
                     },
                     "BmsHVIsolationFault": {
-                        "generic_name": "bms_fault_hv_isolation",
+                        "generic_name": "fault_bms_hv_isolation",
                         "bit_position": 46,
                         "bit_size": 1
                     },
                     "Bms12VPowerSupplyFault": {
-                        "generic_name": "bms_fault_12v_power_supply",
+                        "generic_name": "fault_bms_12v_power_supply",
                         "bit_position": 55,
                         "bit_size": 1
                     },
                     "BmsChargeEnableRelayFault": {
-                        "generic_name": "bms_fault_charge_enable_relay",
+                        "generic_name": "fault_bms_charge_enable_relay",
                         "bit_position": 54,
                         "bit_size": 1
                     },
                     "BmsDischargeEnableRelayFault": {
-                        "generic_name": "bms_fault_discharge_enable_relay",
+                        "generic_name": "fault_bms_discharge_enable_relay",
                         "bit_position": 53,
                         "bit_size": 1
                     },
                     "BmsChargerSafetyRelayFault": {
-                        "generic_name": "bms_fault_charger_safety_relay",
+                        "generic_name": "fault_bms_charger_safety_relay",
                         "bit_position": 52,
                         "bit_size": 1
                     },
                     "BmsInternalMemoryFault": {
-                        "generic_name": "bms_fault_internal_memory",
+                        "generic_name": "fault_bms_internal_memory",
                         "bit_position": 51,
                         "bit_size": 1
                     },
                     "BmsInternalThermistorFault": {
-                        "generic_name": "bms_fault_internal_thermistor",
+                        "generic_name": "fault_bms_internal_thermistor",
                         "bit_position": 50,
                         "bit_size": 1
                     },
                     "BmsInternalLogicFault": {
-                        "generic_name": "bms_fault_internal_logic",
+                        "generic_name": "fault_bms_internal_logic",
                         "bit_position": 49,
                         "bit_size": 1
                     }
