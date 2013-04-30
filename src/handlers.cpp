@@ -66,6 +66,7 @@ void handleCellBroadcast(int messageId, uint64_t data, CanSignal* signals, int s
     byte* byteData = (byte*)&data;
     uint8_t cellId = byteData[0] + 1;
     uint8_t packId = (messageId-0x712);
+    if(packId > 3 || cellId > 63) return;
     if(cellMsgCount[packId-1][cellId-1] == 0 || ++cellMsgCount[packId-1][cellId-1] >= SEND_AFTER_X_MSGS) {
         cellMsgCount[packId-1][cellId-1] = 1;
         float voltage = (byteData[1] << 8 | byteData[2]) * 0.0001f;
