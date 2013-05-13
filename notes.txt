@@ -1,3 +1,5 @@
+open a cygwin terminal
+
 cd /cygdrive/c/develop/amp/openxc/cantranslator/src
 
 // generate signals.cpp from ampsignals.json

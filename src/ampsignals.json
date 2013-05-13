@@ -98,6 +98,13 @@
                         "value_handler": "booleanHandler",
                         "send_frequency": 2
                     },
+                    "TorqueConverterLocked": {
+                        "generic_name": "vehicle_torque_converter_locked",
+                        "bit_position": 33,
+                        "bit_size": 1,
+                        "value_handler": "booleanHandler",
+                        "send_frequency": 2
+                    },
                     "TransmissionTemp": {
                         "generic_name": "vehicle_transmission_temp",
                         "bit_position": 40,
@@ -212,14 +219,14 @@
                     },
                     "DriveMode": {
                         "generic_name": "bms_mode_drive",
-                        "bit_position": 55,
+                        "bit_position": 62,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
                         "send_frequency": 20
                     },
                     "ChargeMode": {
                         "generic_name": "bms_mode_charge",
-                        "bit_position": 56,
+                        "bit_position": 63,
                         "bit_size": 1,
                         "value_handler": "booleanHandler",
                         "send_frequency": 20
@@ -233,6 +240,13 @@
                         "generic_name": "bms_soc",
                         "bit_position": 0,
                         "bit_size": 8,
+                        "send_frequency": 20
+                    },
+                    "Capacity": {
+                        "generic_name": "bms_battery_capacity",
+                        "bit_position": 24,
+                        "bit_size": 16,
+                        "factor": 0.1,
                         "send_frequency": 20
                     }
                 }
