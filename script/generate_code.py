@@ -85,19 +85,18 @@ class Command(object):
 
 
 class Message(object):
-    def __init__(self, buses, bus_address, id, name, is_xtd=False, handler=None):
+    def __init__(self, buses, bus_address, id, name, handler=None):
         self.bus_address = bus_address
         self.buses = buses
         self.id = int(id, 0)
         self.name = name
-        self.is_xtd = is_xtd
         self.handler = handler
         self.signals = []
 
     def __str__(self):
-        return "{&CAN_BUSES[%d], %d, 0, %s}, // %s" % (
+        return "{&CAN_BUSES[%d], %d}, // %s" % (
                 self._lookupBusIndex(self.buses, self.bus_address),
-                self.id, str(self.is_xtd).lower(), self.name)
+                self.id, self.name)
 
     @staticmethod
     def _lookupBusIndex(buses, bus_address):
@@ -112,7 +111,7 @@ class Signal(object):
     def __init__(self, messages=None, message=None, name=None,
             generic_name=None, position=None, length=None, factor=1, offset=0,
             min_value=0.0, max_value=0.0, twos_complement=False, handler=None, ignore=False,
-            states=None, send_frequency=0, send_same=True, little_endian=False,
+            states=None, send_frequency=0, send_same=True,
             writable=False, write_handler=None):
         self.messages = messages
         self.message = message
@@ -138,7 +137,6 @@ class Signal(object):
         # trimming down the data rate of the stream over USB.
         self.send_frequency = send_frequency
         self.send_same = send_same
-        self.little_endian = little_endian
         self.states = states or []
         if len(self.states) > 0 and self.handler is None:
             self.handler = "stateHandler"
@@ -170,7 +168,7 @@ class Signal(object):
                 "max_value": self.max_value}
 
     def validate(self):
-        if self.position == None or self.length == None:
+        if self.position == None:
             sys.stderr.write("ERROR: %s (generic name: %s) is incomplete\n" % (
                 self.name, self.generic_name))
             return False
@@ -189,14 +187,13 @@ class Signal(object):
                 return i
 
     def __str__(self):
-    # TODO: add twos_complement
         result =  ("{&CAN_MESSAGES[%d], \"%s\", %s, %d, %f, %f, %f, %f, "
-                    "%d, %s, false, %s, %s, " % (
+                    "%d, %s, false, %s, " % (
                 self._lookupMessageIndex(self.messages, self.message),
                 self.generic_name, self.position, self.length, self.factor,
                 self.offset, self.min_value, self.max_value,
                 self.send_frequency, str(self.send_same).lower(),
-                str(self.little_endian).lower(), str(self.twos_complement).lower()))
+                str(self.twos_complement).lower()))
         if len(self.states) > 0:
             result += "SIGNAL_STATES[%d], %d" % (self.states_index,
                     len(self.states))
@@ -205,42 +202,6 @@ class Signal(object):
         result += ", %s, %s" % (str(self.writable).lower(),
                 self.write_handler or "NULL")
         result += "}, // %s" % self.name
-        return result
-
-class Io(object):
-    def __init__(self, pin_number=None, name=None,
-            generic_name=None, is_digital=True,
-            handler=None, ignore=False,
-            send_frequency=1, send_same=False,
-            writable=False, write_handler=None):
-        self.pin_number = pin_number
-        self.name = name
-        self.generic_name = generic_name
-        self.is_digital = is_digital
-        self.handler = handler
-        self.writable = writable
-        self.write_handler = write_handler
-        self.ignore = ignore
-        self.array_index = 0
-        # the frequency determines how often the message should be propagated. a
-        # frequency of 1 means that every time the signal it is received we will
-        # try to handle it. a frequency of 2 means that every other signal
-        # will be handled (and the other half is ignored). This is useful for
-        # trimming down the data rate of the stream over USB.
-        self.send_frequency = send_frequency
-        self.send_same = send_same
-
-    def to_dict(self):
-        return {"generic_name": self.generic_name}
-
-    def validate(self):
-        return True
-
-    def __str__(self):
-        result =  ("{ \"%s\", %s, %d, %s, false, %d }, // %s" % (
-                self.generic_name, str(self.is_digital).lower(),
-                self.send_frequency, str(self.send_same).lower(),
-                self.pin_number, self.name))
         return result
 
 
@@ -257,11 +218,9 @@ class Parser(object):
     def __init__(self, name=None):
         self.name = name
         self.buses = defaultdict(dict)
-        self.ios = []
         self.signal_count = 0
         self.message_count = 0
         self.command_count = 0
-        self.io_signal_count = 0
 
     def parse(self):
         raise NotImplementedError
@@ -301,11 +260,6 @@ class Parser(object):
                     valid = valid and signal.validate()
                     if signal.handler is not None:
                         self.uses_custom_handlers = True
-        for io in self.ios:
-            valid = valid and io.validate()
-            if io.handler is not None:
-                self.uses_custom_handlers = True
-            
         return valid
 
     def validate_name(self):
@@ -380,15 +334,6 @@ class Parser(object):
         print("};")
         print()
 
-        print("const int IO_SIGNAL_COUNT = %d;" % self.io_signal_count)
-        print("IoSignal IO_SIGNALS[IO_SIGNAL_COUNT] = {")
-        
-        i = 1
-        for io in self.ios:
-            print("    %s" % io)
-        print("};")
-        print()
-        
         print("const int COMMAND_COUNT = %d;" % self.command_count)
         print("CanCommand COMMANDS[COMMAND_COUNT] = {")
 
@@ -434,16 +379,6 @@ class Parser(object):
         print("}")
         print()
 
-        print("int getIoSignalCount() {")
-        print("    return IO_SIGNAL_COUNT;")
-        print("}")
-        print()
-
-        print("IoSignal* getIoSignals() {")
-        print("    return IO_SIGNALS;")
-        print("}")
-        print()
-
         print("void decodeCanMessage(CanBus* bus, int id, uint64_t data) {")
         print("    switch(bus->address) {")
         for bus_address, bus in self.buses.items():
@@ -475,19 +410,6 @@ class Parser(object):
 
         print("}\n")
 
-        print("void readIoSignal(IoSignal* signal) {")
-        print("    switch(signal->pinNumber) {")
-        for io in self.ios:
-            if io.handler is not None:
-                print("    case %d: // %s" % (io.pin_number, io.name))
-                print("        translateIoSignal(&listener, %s, signal);" % io.handler) 
-                print("        break;")
-        print("    default:")
-        print("        translateIoSignal(&listener, signal);")
-        print("    }")
-        print("}")
-        print()
-        
         # Create a set of filters.
         self.print_filters()
         print()
@@ -510,8 +432,8 @@ class Parser(object):
             print("    case %s:" % bus_address)
             print("        *count = %d;" % len(bus['messages']))
             for i, message in enumerate(bus['messages']):
-                print("        FILTERS[%d] = {%d, 0x%x, %d, %s};" % (
-                        i, i, message.id, 1, str(message.is_xtd).lower()))
+                print("        FILTERS[%d] = {%d, 0x%x, %d};" % (
+                        i, i, message.id, 1))
             print("        break;")
         print("    }")
         print("    return FILTERS;")
@@ -541,71 +463,53 @@ class JsonParser(Parser):
                 merged_dict = merge(merged_dict, data)
 
         self.commands = []
-        io_idx = 1
         for bus_address, bus_data in merged_dict.items():
-            if "io" == bus_address:
-			#TODO: check if it's io and don't put it in buses then, but create an io
-                for io_name, io_signal in bus_data.get('inputs', {}).get('signals', {}).items():
-                    self.ios.append(Io(io_signal.get('pin', None),
-                            io_name,
-                            io_signal.get('generic_name', None),
-                            io_signal.get('digital', True),
-                            io_signal.get('value_handler', None),
-                            io_signal.get('ignore', False),
-                            io_signal.get('send_frequency', 1),
-                            io_signal.get('send_same', False),
-                            io_signal.get('writable', False),
-                            io_signal.get('write_handler', None)))
-                    self.io_signal_count += 1
-            else:
-                speed = bus_data.get('speed', None)
-                if speed is None:
-                    fatal_error("Bus %s is missing the 'speed' attribute" %
-                            bus_address)
-                    sys.exit(1)
-                self.buses[bus_address]['speed'] = speed
-                self.buses[bus_address].setdefault('messages', [])
-                for command_id, command_data in bus_data.get(
-                        'commands', {}).items():
-                    self.command_count += 1
-                    command = Command(command_id, command_data.get('handler', None))
-                    self.commands.append(command)
+            speed = bus_data.get('speed', None)
+            if speed is None:
+                fatal_error("Bus %s is missing the 'speed' attribute" %
+                        bus_address)
+                sys.exit(1)
+            self.buses[bus_address]['speed'] = speed
+            self.buses[bus_address].setdefault('messages', [])
+            for command_id, command_data in bus_data.get(
+                    'commands', {}).items():
+                self.command_count += 1
+                command = Command(command_id, command_data.get('handler', None))
+                self.commands.append(command)
 
-                for message_id, message_data in bus_data.get('messages', {}
-                        ).items():
-                    self.message_count += 1
-                    message = Message(self.buses, bus_address, message_id,
-                            message_data.get('name', None),
-                            message_data.get('is_xtd', False),
-                            message_data.get('handler', None))
-                    if 'signals' in message_data:
-                        self.signal_count += len(message_data['signals'])
-                        for signal_name, signal in message_data['signals'].items():
-                            states = []
-                            for name, raw_matches in signal.get('states', {}).items():
-                                for raw_match in raw_matches:
-                                    states.append(SignalState(raw_match, name))
-                            message.signals.append(Signal(
-                                    self.buses[bus_address]['messages'],
-                                    message,
-                                    signal_name,
-                                    signal.get('generic_name', None),
-                                    signal.get('bit_position', None),
-                                    signal.get('bit_size', None),
-                                    signal.get('factor', 1.0),
-                                    signal.get('offset', 0.0),
-                                    signal.get('min_value', 0.0),
-                                    signal.get('max_value', 0.0),
-                                    signal.get('twos_complement', False),
-                                    signal.get('value_handler', None),
-                                    signal.get('ignore', False),
-                                    states,
-                                    signal.get('send_frequency', 1),
-                                    signal.get('send_same', True),
-                                    signal.get('little_endian', False),
-                                    signal.get('writable', False),
-                                    signal.get('write_handler', None)))
-                    self.buses[bus_address]['messages'].append(message)
+            for message_id, message_data in bus_data.get('messages', {}
+                    ).items():
+                self.message_count += 1
+                message = Message(self.buses, bus_address, message_id,
+                        message_data.get('name', None),
+                        message_data.get('handler', None))
+                if 'signals' in message_data:
+                    self.signal_count += len(message_data['signals'])
+                    for signal_name, signal in message_data['signals'].items():
+                        states = []
+                        for name, raw_matches in signal.get('states', {}).items():
+                            for raw_match in raw_matches:
+                                states.append(SignalState(raw_match, name))
+                        message.signals.append(Signal(
+                                self.buses[bus_address]['messages'],
+                                message,
+                                signal_name,
+                                signal.get('generic_name', None),
+                                signal.get('bit_position', None),
+                                signal.get('bit_size', None),
+                                signal.get('factor', 1.0),
+                                signal.get('offset', 0.0),
+                                signal.get('min_value', 0.0),
+                                signal.get('max_value', 0.0),
+                                signal.get('twos_complement', False),
+                                signal.get('value_handler', None),
+                                signal.get('ignore', False),
+                                states,
+                                signal.get('send_frequency', 1),
+                                signal.get('send_same', True),
+                                signal.get('writable', False),
+                                signal.get('write_handler', None)))
+                self.buses[bus_address]['messages'].append(message)
 
 def main():
     arguments = parse_options()

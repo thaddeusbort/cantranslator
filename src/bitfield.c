@@ -1,6 +1,6 @@
 #include "bitfield.h"
-#include "log.h"
 #include <stdbool.h>
+#include "log.h"
 
 bool bigEndian() {
     union {
@@ -25,16 +25,6 @@ uint64_t bitmask(int numBits) {
     return ((uint64_t)0x1u << numBits) - 1;
 }
 
-void reverseBytes(uint64_t* data, int numBytes) {
-    uint8_t* bytes = (uint8_t*)data;
-    int i;
-    for(i=0; i<numBytes/2; ++i) {
-        uint8_t temp = bytes[i];
-        bytes[i] = bytes[numBytes-i-1];
-        bytes[numBytes-i-1] = temp;
-    }
-}
-
 int startingByte(int startBit) {
     return startBit / 8;
 }
@@ -43,29 +33,40 @@ int endingByte(int startBit, int numBits) {
     return (startBit + numBits - 1) / 8;
 }
 
-uint64_t getBitField(uint64_t data, int startBit, int numBits, uint8_t isLittleEndian) {
+uint64_t getBitField(uint64_t data, int startBit, int numBits) {
     int startByte = startingByte(startBit);
     int endByte = endingByte(startBit, numBits);
 
     uint64_t dataCopy = data;
-    if(!bigEndian()) {
+    if(bigEndian()) {
         dataCopy = __builtin_bswap64(data);
     }
     uint8_t* bytes = (uint8_t*)&dataCopy;
     uint64_t ret = bytes[startByte];
+    
+    //debugNoNewline("Reading CAN message, data = 0x");
+    int i=0;
+    //while(i < 8) {
+    //    debugNoNewline("%02x ", bytes[i]);
+    //    i++;
+    //}
+    //debugNoNewline("\r\n");
+    
+    uint8_t isLittleEndian = 0;
     if(startByte != endByte) {
-        // The lowest byte address contains the most significant bit.
-        int i;
-        for(i = startByte + 1; i <= endByte; i++) {
-            ret = ret << 8;
-            ret = ret | bytes[i];
+        if(!isLittleEndian) {
+            // The lowest byte address contains the most significant bit.
+            for(i = startByte + 1; i <= endByte; i++) {
+                ret = ret << 8;
+                ret = ret | bytes[i];
+            }
+        } else {
+            // do something here for little endian?
         }
     }
 
     ret >>= 8 - findEndBit(startBit, numBits);
     ret = ret & bitmask(numBits);
-    if(0 == numBits % 8 && isLittleEndian)
-        reverseBytes(&ret, numBits / 8);
     return ret;
 }
 

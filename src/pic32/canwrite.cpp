@@ -25,14 +25,8 @@ bool sendCanMessage(CanBus* bus, CanMessage request) {
         message->messageWord[2] = 0;
         message->messageWord[3] = 0;
 
-        if(request.isXtd) {
-            message->msgSID.SID = request.id >> 18;
-            message->msgEID.IDE = 1;
-            message->msgEID.EID = request.id & 0x3FFFF;
-        } else {
-            message->msgSID.SID = request.id;
-            message->msgEID.IDE = 0;
-        }
+        message->msgSID.SID = request.id;
+        message->msgEID.IDE = 0;
         message->msgEID.DLC = 8;
         memset(message->data, 0, 8);
         copyToMessageBuffer(request.data, message->data);

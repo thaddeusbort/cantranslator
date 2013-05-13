@@ -3,7 +3,6 @@
 
 #include "canread.h"
 #include "canwrite.h"
-#include "ioutil.h"
 
 /* Public: The number of CAN buses to read. This is limited to 2, as the
  * hardware controller only has 2 CAN channels.
@@ -32,14 +31,6 @@ int getSignalCount();
  */
 CanBus* getCanBuses();
 
-/* Public: The number of IO pins to use.
- */
-int getIoSignalCount();
-
-/* Public: Return an array of all IO pins used for hard-wired signals.
- */
-IoSignal* getIoSignals();
-
 /* Public: Return the name of the vehicle or architecture this translator is
  * currently programmed for.
  */
@@ -50,7 +41,7 @@ const char* getMessageSet();
  * as an OpenXC-style JSON message.
  *
  * This is the main workhorse function of the CAN translator. Every time a new
- * CAN message is received that matches one of the signals in the list returned
+ * CAN message is received that matches one of the signals in the list returend
  * by getSignals(), this function is called with the message ID and 64-bit data
  * field.
  *
@@ -59,14 +50,6 @@ const char* getMessageSet();
  * data - The 64-bit data field of the CAN message.
  */
 void decodeCanMessage(CanBus* bus, int id, uint64_t data);
-
-/* Public: Read Input signal from pin and send the resulting value over USB
- * as an OpenXC-style JSON message.
- *
- * signal - The IO signal to read.
- * 
- */
-void readIoSignal(IoSignal* signal);
 
 /* Public: Initialize an array of the CAN message filters that should be set for
  * the CAN module with the given address.

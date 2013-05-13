@@ -22,21 +22,16 @@ extern Listener listener;
 
 void receiveCan(CanBus*);
 void initializeAllCan();
-void initializeAllInputs();
 bool receiveWriteRequest(uint8_t*);
 void updateDataLights();
 
 void setup() {
     initializeAllCan();
-    initializeAllInputs();
 }
 
 void loop() {
     for(int i = 0; i < getCanBusCount(); i++) {
         receiveCan(&getCanBuses()[i]);
-    }
-    for(int i = 0; i < getIoSignalCount(); i++) {
-        readIoSignal(&getIoSignals()[i]);
     }
 
     readFromHost(listener.usb, receiveWriteRequest);
@@ -47,6 +42,7 @@ void loop() {
         processCanWriteQueue(&getCanBuses()[i]);
     }
 
+    customLoopHandler();
     updateDataLights();
 }
 
@@ -60,7 +56,6 @@ void updateDataLights() {
     for(int i = 0; i < getCanBusCount(); i++) {
         busActive = busActive || canBusActive(&getCanBuses()[i]);
     }
-    customLoopHandler();
 
     if(!busWasActive && busActive) {
         debug("CAN woke up - enabling LED");
@@ -88,12 +83,6 @@ void updateDataLights() {
 void initializeAllCan() {
     for(int i = 0; i < getCanBusCount(); i++) {
         initializeCan(&(getCanBuses()[i]));
-    }
-}
-
-void initializeAllInputs() {
-    for(int i = 0; i < getIoSignalCount(); i++) {
-        pinMode(getIoSignals()[i].pinNumber, INPUT);
     }
 }
 

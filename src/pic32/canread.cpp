@@ -7,10 +7,7 @@ CanMessage receiveCanMessage(CanBus* bus) {
     CAN::RxMessageBuffer* message = CAN_CONTROLLER(bus)->getRxMessage(
             CAN::CHANNEL1);
 
-    CanMessage result = {bus, message->msgEID.IDE
-                                ? (message->msgSID.SID << 18) | message->msgEID.EID
-                                : message->msgSID.SID
-                        , 0, message->msgEID.IDE};
+    CanMessage result = {bus, message->msgSID.SID, 0};
     // Copy incoming data, flipping byte order to little-endian storage (can't
     // just use memcpy).
     result.data = message->data[0];

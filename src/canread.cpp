@@ -1,6 +1,6 @@
 #include "canread.h"
-#include "log.h"
 #include <stdlib.h>
+#include "log.h"
 
 /* Private: Serialize the root JSON object to a string (ending with a newline)
  * and send it to the listener.
@@ -59,8 +59,7 @@ void postTranslate(CanSignal* signal, float value) {
 
 float decodeCanSignal(CanSignal* signal, uint64_t data) {
     uint64_t rawValue = getBitField(data, signal->bitPosition,
-            signal->bitSize, signal->littleEndian);
-
+            signal->bitSize);
     if(signal->twosComplement) {
         return getTwosComplement(rawValue, signal->bitSize) * signal->factor + signal->offset;
     }

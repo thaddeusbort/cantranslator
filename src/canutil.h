@@ -16,13 +16,11 @@
  * bus - A pointer to the bus this message is on.
  * id - The ID of the message.
  * data  - The message's data field.
- * isXtd - extended ID
  */
 typedef struct {
     struct CanBus* bus;
     uint32_t id;
     uint64_t data;
-    bool isXtd;
 } CanMessage;
 
 QUEUE_DECLARE(CanMessage, 16);
@@ -68,7 +66,6 @@ typedef struct {
     int number;
     int value;
     int channel;
-    bool isXtd;
 } CanFilter;
 
 /* Public: A state encoded (SED) signal's mapping from numerical values to
@@ -120,7 +117,6 @@ struct CanSignal {
     int sendFrequency;
     bool sendSame;
     bool received;
-    bool littleEndian;
     bool twosComplement;
     CanSignalState* states;
     int stateCount;

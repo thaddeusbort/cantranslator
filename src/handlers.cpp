@@ -6,35 +6,6 @@
 char mVin[18] = { '\0' };
 const char* const VIN = "VIN";
 
-float handleTurnSignals(IoSignal* signal, float value, bool* send, Listener* listener) {
-    *send = false;   // don't send the individual signals only the combined signal
-    const char* const RIGHT_NAME = "turn_signal_status";
-    const char* const LEFT_NAME = "turn_signal_left";
-    bool isLeft = strcmp(LEFT_NAME, signal->genericName) == 0;
-    IoSignal* otherTurnSignal;
-    otherTurnSignal = lookupSignal(isLeft? RIGHT_NAME: LEFT_NAME, getIoSignals(), getIoSignalCount());
-    
-    const char* status;
-    if(value && otherTurnSignal->lastValue)
-        status = "BOTH";
-    else if(!value && !otherTurnSignal->lastValue)
-        status = "OFF";
-    else if((isLeft && value) || !(isLeft || value))
-        status = "LEFT";
-    else
-        status = "RIGHT";
-
-    debug("%s=%s\r\n", RIGHT_NAME, status);
-    sendStringMessage(RIGHT_NAME, status, listener);
-    return value;   // need to return the value so that it gets saved as the lastValue for the signal
-}
-
-bool indicatorHandler(CanSignal* signal, CanSignal* signals,
-        int signalCount, float value, bool* send) {
-    *send = value || signal->lastValue; // send if value is true or it had been true
-    return value;
-}
-
 void handleVINMessage(int messageId, uint64_t data, CanSignal* signals, int signalCount, Listener* listener) {
     // check if Byte1 is 0x49 and Byte2 is 0-2
     // decode the value and concatenate it until we have the whole VIN
@@ -96,48 +67,14 @@ bool requestVIN() {
     return false;
 }
 
-bool sendLoggerPresent() {
-    // send message with ID 0x7E0, byte 1 3F, byte 2 00
-    CanSignal* signals = getSignals();
-    int signalCount = getSignalCount();
-    CanSignal* signal = lookupSignal("service_id", signals, signalCount);
-    if(signal != NULL) {
-        return sendCanSignal(signal, cJSON_CreateNumber(0x3f00), signals, signalCount, true);
-    }
-    return false;
-}
-
 void customLoopHandler() {
-    static int count = 125000;
-    static unsigned long lastSentLoggerPresent = 0u;
+    static int count = 0;
 
-    if(++count >= 125000) {
-        count = 0;
-        requestVIN();
-    }
-    if(count % 1000 == 0) {
+    if(count++ >= 100000) {
         unsigned long time_ms = systemTimeMs();
-        if((time_ms - lastSentLoggerPresent) > 15000) {
-            lastSentLoggerPresent = time_ms;
-            sendLoggerPresent();
-        }
+        debug("Still alive at:%d", time_ms);
+        if(strlen(mVin) != 17)
+            requestVIN();
+        count = 0;
     }
-}
-
-void onUsbConfigured() {
-// resend all the CAN signals and IO signals after USB is connected
-    CanSignal* canSignals = getSignals();
-    int count = getSignalCount();
-    int idx;
-    for(idx=0; idx<count; ++idx) {
-        canSignals[idx].received = false;
-    }
-
-    IoSignal* ioSignals = getIoSignals();
-    count = getIoSignalCount();
-    for(idx=0; idx<count; ++idx) {
-        ioSignals[idx].received = false;
-    }
-
-    memset(mVin, '\0', 18); // reset the vin
 }

@@ -1,0 +1,21 @@
+cd /cygdrive/c/develop/amp/openxc/cantranslator/src
+
+// generate signals.cpp from ampsignals.json
+../script/generate_code.py --json ampsignals.json > signals.cpp
+
+
+// BUILD FOR DEBUG ///////////////////////////////////
+make clean
+DEBUG=1 make -j
+SERIAL_PORT=com? make flash
+
+
+// then connect with a terminal program at 115200 8N1, ANSI to view debug output
+
+
+
+
+// BUILD FOR RELEASE /////////////////////////////////
+make clean
+make -j
+SERIAL_PORT=com? make flash
